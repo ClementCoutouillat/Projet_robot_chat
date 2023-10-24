@@ -1,0 +1,31 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid 8145f05c-a682-4e5b-b8c3-63c340396fcb)
+
+  (paper "A4")
+
+  (lib_symbols
+  )
+
+
+  (sheet (at 19.05 17.78) (size 121.92 74.93) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 1ecf356a-76f9-48f1-9d62-4455494be199)
+    (property "Sheetname" "Capteurs" (at 19.05 17.0684 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "Capteurs.kicad_sch" (at 19.05 93.2946 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "Projet Chat - Capteurs"
+        (path "/8145f05c-a682-4e5b-b8c3-63c340396fcb" (page "2"))
+      )
+    )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

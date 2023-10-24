@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ACS711KLCTR-12AB-T")(type "KiCad")(uri "${KIPRJMOD}/LIB_ACS711KLCTR-12AB-T/ACS711KLCTR-12AB-T.pretty")(options "")(descr ""))
+  (lib (name "KiCad")(type "KiCad")(uri "${KIPRJMOD}/LIB_ACS711KLCTR-12AB-T/ACS711KLCTR-12AB-T/KiCad.pretty")(options "")(descr ""))
+)

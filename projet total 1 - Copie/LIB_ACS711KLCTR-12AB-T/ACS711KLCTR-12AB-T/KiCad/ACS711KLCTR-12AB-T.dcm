@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP ACS711KLCTR-12AB-T
+D Hall-Effect Linear Current Sensor with Overcurrent Fault Output for <100 V Isolation Applications
+K
+F https://www.allegromicro.com/-/media/files/datasheets/acs711-datasheet.ashx
+$ENDCMP
+#
+#End Doc Library
