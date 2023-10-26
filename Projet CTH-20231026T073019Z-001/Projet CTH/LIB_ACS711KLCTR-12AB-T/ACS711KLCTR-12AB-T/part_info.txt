@@ -1,9 +1,0 @@
-Manufacturer=Allegro Microsystems
-PartNumber=ACS711KLCTR-12AB-T
-PartCategory=Integrated Circuit
-PackageCategory=Small Outline Packages
-PinCount=8
-Version=11.2
-Released=2017-06-20 08:41:44
-Downloaded=2023-10-23 13:24:09
-3D=Y

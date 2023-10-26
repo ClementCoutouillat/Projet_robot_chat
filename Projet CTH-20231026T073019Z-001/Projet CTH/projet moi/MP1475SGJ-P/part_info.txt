@@ -1,9 +1,0 @@
-Manufacturer=Monolithic Power Systems (MPS)
-PartNumber=MP1475SGJ-P
-PartCategory=Integrated Circuit
-PackageCategory=SOT23 (8-Pin)
-PinCount=8
-Version=1.2
-Released=2022-02-10 05:49:01
-Downloaded=2023-09-19 09:22:55
-3D=Y
