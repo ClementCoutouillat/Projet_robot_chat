@@ -1,0 +1,6 @@
+../mylibs/dcMotor.c:19:6:stopMotor	8	static
+../mylibs/dcMotor.c:34:6:startMotor	8	static
+../mylibs/dcMotor.c:48:6:setSpeed	16	static
+../mylibs/dcMotor.c:55:6:dcMotorInit	8	static
+../mylibs/dcMotor.c:70:6:speedCompute	40	static
+../mylibs/dcMotor.c:119:6:HAL_TIM_PeriodElapsedCallback	24	static

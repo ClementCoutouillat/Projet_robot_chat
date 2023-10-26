@@ -1,0 +1,4 @@
+../mylibs/getEncoder.c:14:6:startEncoder	8	static
+../mylibs/getEncoder.c:24:9:getMotorDirectionfromEncoder	8	static
+../mylibs/getEncoder.c:34:10:getEncoderValue	16	static
+../mylibs/getEncoder.c:49:10:getMotorSpeedfromEncoder	16	static

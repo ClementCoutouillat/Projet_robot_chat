@@ -1,0 +1,4 @@
+../mylibs/PIDControl.c:14:6:PIDInit	8	static
+../mylibs/PIDControl.c:41:6:setPIDparam	64	static
+../mylibs/PIDControl.c:57:7:incrementPIDControl	24	static
+../mylibs/PIDControl.c:78:6:integraLlimit	24	static
