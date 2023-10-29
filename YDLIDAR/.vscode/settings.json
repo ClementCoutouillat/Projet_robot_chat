@@ -1,0 +1,13 @@
+{
+  "stm32-for-vscode.openOCDPath": false,
+  "stm32-for-vscode.armToolchainPath": false,
+  "C_Cpp.errorSquiggles": "disabled",
+  "files.associations": {
+    "main.h": "c",
+    "stdint.h": "c",
+    "compare": "c",
+    "ydlidar.h": "c",
+    "type_traits": "c",
+    "string.h": "c"
+  }
+}
