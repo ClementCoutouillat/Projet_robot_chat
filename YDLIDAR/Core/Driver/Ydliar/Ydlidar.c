@@ -3,6 +3,14 @@
 #include "math.h"
 ydlidar_t ydlidar;
 extern UART_HandleTypeDef huart1;
+
+/**
+ * @brief This function is used to calculate the checksum of the data CRC16
+ *
+ * @param data  The data to be calculated
+ * @param length  The length of the data to be calculated
+ * @return uint16_t
+ */
 uint16_t calculateChecksum(uint16_t *data, size_t length)
 {
     uint16_t checksum = 0;
@@ -13,6 +21,13 @@ uint16_t calculateChecksum(uint16_t *data, size_t length)
 
     return checksum;
 }
+
+/**
+ * @brief Get the Device Info object
+ *
+ * @param device_info  The device info Struct Pointer
+ * @return result_t  RESULT_OK or RESULT_FAIL
+ */
 result_t getDeviceInfo(ydlidar_device_info_t *device_info)
 {
     ydlidar_response_header_t response_header;
@@ -39,6 +54,12 @@ result_t getDeviceInfo(ydlidar_device_info_t *device_info)
     }
 }
 
+/**
+ * @brief Get the Device Health object
+ *
+ * @param device_health  The device health Struct Pointer
+ * @return result_t  RESULT_OK or RESULT_FAIL
+ */
 result_t getDeviceHealth(ydlidar_device_health_t *device_health)
 {
     ydlidar_response_header_t response_header;
@@ -63,11 +84,20 @@ result_t getDeviceHealth(ydlidar_device_health_t *device_health)
     }
 }
 
+/**
+ * @brief  This function is used to stop the scan
+ *
+ */
 void stopScan()
 {
     sendCommand(YDLIDER_CMD_STOP);
 }
 
+/**
+ * @brief  This function is used to start the scan
+ *
+ * @return result_t  RESULT_OK or RESULT_FAIL
+ */
 result_t startScan()
 {
     stopScan();
@@ -84,7 +114,11 @@ result_t startScan()
         return RESULT_FAIL;
     }
 }
-
+/**
+ * @brief This function is used to send the command
+ *
+ * @param cmd  The command to be sent
+ */
 void sendCommand(uint8_t cmd)
 {
     ydlidar_cmd_packet_t cmd_packet;
@@ -93,6 +127,12 @@ void sendCommand(uint8_t cmd)
     ydlidar.func.send_command((uint8_t *)&cmd_packet, sizeof(cmd_packet));
 }
 
+/**
+ * @brief This function is used to receive the response header
+ *
+ * @param response_header  The response header Struct Pointer
+ * @return result_t  RESULT_OK or RESULT_FAIL
+ */
 result_t receiveResponseHeader(ydlidar_response_header_t *response_header)
 {
     uint8_t *header = (uint8_t *)response_header;
@@ -116,13 +156,24 @@ result_t receiveResponseHeader(ydlidar_response_header_t *response_header)
 }
 uint8_t scanPoints[10][MAX_SAMPLE_DATA_SIZE];
 uint8_t SCAN_CIRCLE_INDEX = 0;
+
+/**
+ * @brief  This function is used to start receive the scan data
+ *
+ */
 void startReceiveScanData(void)
 {
     ydlidar.func.receive_data_dma(scanPoints[SCAN_CIRCLE_INDEX], sizeof(scanPoints[SCAN_CIRCLE_INDEX]));
     // check the start flag
 }
 
-// distance parse
+/**
+ * @brief   This function is used to parse the distance
+ *
+ * @param rawDistance  The raw distance data
+ * @param LSN  The number of the sample data
+ * @param realDistance  The real distance after parse
+ */
 void parseDistance(uint16_t *rawDistance, int LSN, double *realDistance)
 {
     for (int i = 0; i < LSN; i++)
@@ -131,7 +182,14 @@ void parseDistance(uint16_t *rawDistance, int LSN, double *realDistance)
     }
 }
 
-// angle first level parse
+/**
+ * @brief This function is used to parse the angle
+ *
+ * @param FSA  The start angle
+ * @param LSA  The end angle
+ * @param LSN  The number of the sample data
+ * @param angles  The angle after parse
+ */
 void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
 {
     // calculate start angle and end angle
@@ -147,7 +205,13 @@ void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
     }
 }
 
-// angle second level parse
+/**
+ * @brief  This function is used to parse the second level angle
+ *
+ * @param angles  The angle after first level parse
+ * @param LSN  The number of the sample data
+ * @param distances  The distance after parse
+ */
 void AngleSecondLevelParse(double *angles, int LSN, double *distances)
 {
     // IF Distance𝑖 == 0 AngCorrect𝑖 = 0
@@ -167,6 +231,11 @@ void AngleSecondLevelParse(double *angles, int LSN, double *distances)
     }
 }
 int8_t processScanDataIndex = 0;
+
+/**
+ * @brief  This function is used to process the scan data
+ *
+ */
 void dataProcess(void)
 {
     if (processScanDataIndex >= 10)
@@ -182,7 +251,7 @@ void dataProcess(void)
     uint16_t checkSumrResult = 0;
     for (int i = 0; i < MAX_SAMPLE_DATA_SIZE; i++)
     {
-        if (data[i] == 0xAA && data[i + 1] == 0x55)
+        if (data[i] == 0xAA && data[i + 1] == 0x55) // check the start flag
         {
 
             ydlidar_data_packet_t *data_packet = (ydlidar_data_packet_t *)&data[i];
@@ -190,22 +259,22 @@ void dataProcess(void)
             {
                 continue; // skip the start data packet
             }
-            checkSumrResult = calculateChecksum((uint16_t *)&data[i], 4);
+            checkSumrResult = calculateChecksum((uint16_t *)&data[i], 4); // calculate the checksum
             uint16_t sampleDatas_SI[data_packet->size_LSN];
             uint16_t *sampledata = (uint16_t *)&data[i + sizeof(ydlidar_data_packet_t)];
 
-            for (int j = 0; j < data_packet->size_LSN; j++)
+            for (int j = 0; j < data_packet->size_LSN; j++) // convert the data to uint16_t
             {
                 sampleDatas_SI[j] = sampledata[j];
             }
-            checkSumrResult += calculateChecksum(sampledata, data_packet->size_LSN);
+            checkSumrResult += calculateChecksum(sampledata, data_packet->size_LSN); // calculate the checksum
             if (checkSumrResult == data_packet->crc_CS)
             {
                 double distances[data_packet->size_LSN];
                 double angles[data_packet->size_LSN];
-                parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);
-                AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles);
-                AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);
+                parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);                                                       // parse the distance
+                AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles); // parse the first level angle
+                AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);                                   // parse the second level angle
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
                     if (distances[j] != 0)
@@ -232,11 +301,20 @@ void dataProcess(void)
     }
     processScanDataIndex++;
 }
+
+/**
+ * @brief  This function is used to reset the YDLIDAR
+ *
+ */
 void reset()
 {
     sendCommand(YDLIDAR_CMD_RESET);
 }
 
+/**
+ * @brief  This function is used to restart the scan
+ *
+ */
 void restartScan(void)
 {
     stopScan();
