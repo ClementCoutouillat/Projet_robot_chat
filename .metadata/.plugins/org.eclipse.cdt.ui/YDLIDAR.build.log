@@ -1,0 +1,10 @@
+22:01:08 **** Incremental Build of configuration Debug for project YDLIDAR ****
+make -j12 all 
+arm-none-eabi-size   YDLIDAR.elf 
+   text	   data	    bss	    dec	    hex	filename
+  24924	    112	   8192	  33228	   81cc	YDLIDAR.elf
+Finished building: default.size.stdout
+ 
+
+22:01:08 Build Finished. 0 errors, 0 warnings. (took 331ms)
+

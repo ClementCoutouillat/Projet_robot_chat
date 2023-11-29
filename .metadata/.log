@@ -1,0 +1,45 @@
+!SESSION 2023-11-29 21:34:32.874 -----------------------------------------------
+eclipse.buildId=Version 1.13.2
+java.version=17.0.6
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-11-29 21:34:40.000
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-11-29 21:34:40.009
+!MESSAGE Log4j2 initialized with config file D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-11-29 21:34:43.450
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2023-11-29 21:35:53.357
+!MESSAGE Using unsafe http transport to retrieve http://download.eclipse.org/usssdk/updates/release/latest, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2023-11-29 21:35:53.746
+!MESSAGE Using unsafe http transport to retrieve http://download.eclipse.org/usssdk/drops/release/1.2.2/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+!SESSION 2023-11-29 21:36:05.524 -----------------------------------------------
+eclipse.buildId=Version 1.13.2
+java.version=17.0.6
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-11-29 21:36:11.223
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-11-29 21:36:11.224
+!MESSAGE Log4j2 initialized with config file D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-11-29 21:36:16.331
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2023-11-29 21:37:09.871
+!MESSAGE Using unsafe http transport to retrieve http://download.eclipse.org/usssdk/updates/release/latest, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.equinox.p2.repository 2 0 2023-11-29 21:37:10.261
+!MESSAGE Using unsafe http transport to retrieve http://download.eclipse.org/usssdk/drops/release/1.2.2/content.xml.xz, see CVE-2021-41033. Consider using https instead.
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-11-29 21:38:24.692
+!MESSAGE Indexed 'YDLIDAR' (22 sources, 82 headers) in 2.84 sec: 4,674 declarations; 23,720 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.007%)
