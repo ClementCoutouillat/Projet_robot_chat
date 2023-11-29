@@ -4,6 +4,8 @@
 ydlidar_t ydlidar;
 extern UART_HandleTypeDef huart1;
 
+// #define YDLIDAR_DEBUG  //TODO:comment this line to disable debug mode
+
 /**
  * @brief This function is used to calculate the checksum of the data CRC16
  *
@@ -138,18 +140,18 @@ result_t receiveResponseHeader(ydlidar_response_header_t *response_header)
     uint8_t *header = (uint8_t *)response_header;
     ydlidar.func.receive_response(header, YDLIDAR_RESPONSE_HEADER_SIZE);
 #ifdef YDLIDAR_DEBUG
-    printf("[DEBUG] header[0] = %x\n", header[0]);
-    printf("[DEBUG] header[1] = %x\n", header[1]);
-    printf("[DEBUG] header[2] = %x\n", header[2]);
-    printf("[DEBUG] header[3] = %x\n", header[3]);
-    printf("[DEBUG] header[4] = %x\n", header[4]);
-    printf("[DEBUG] header[5] = %x\n", header[5]);
-    printf("[DEBUG] header[6] = %x\n", header[6]);
-    printf("[DEBUG] Response start_flag: %04x\n", response_header->start_flag);
-    printf("[DEBUG] Response length: %d\n", response_header->response_length);
-    printf("[DEBUG] Response mode: %d\n", response_header->response_mode);
-    printf("[DEBUG] Response type mode: %x\n", response_header->type_mode);
-    printf("[DEBUG] Response type mode: %d\n", response_header->type_mode);
+    printf("[DEBUG] header[0] = %x\r\n", header[0]);
+    printf("[DEBUG] header[1] = %x\r\n", header[1]);
+    printf("[DEBUG] header[2] = %x\r\n", header[2]);
+    printf("[DEBUG] header[3] = %x\r\n", header[3]);
+    printf("[DEBUG] header[4] = %x\r\n", header[4]);
+    printf("[DEBUG] header[5] = %x\r\n", header[5]);
+    printf("[DEBUG] header[6] = %x\r\n", header[6]);
+    printf("[DEBUG] Response start_flag: %04x\r\n", response_header->start_flag);
+    printf("[DEBUG] Response length: %d\r\n", response_header->response_length);
+    printf("[DEBUG] Response mode: %d\r\n", response_header->response_mode);
+    printf("[DEBUG] Response type mode: %x\r\n", response_header->type_mode);
+    printf("[DEBUG] Response type mode: %d\r\n", response_header->type_mode);
 
 #endif
     return RESULT_OK;
@@ -246,8 +248,14 @@ void dataProcess(void)
     {
         return;
     }
-    printf("[DEBUG] processScanDataIndex = %d\n", processScanDataIndex);
+    printf("[DEBUG] processScanDataIndex = %d\r\n", processScanDataIndex);
     uint8_t *data = (uint8_t *)&scanPoints[processScanDataIndex];
+    // print the data
+    for (int i = 0; i < MAX_SAMPLE_DATA_SIZE; i++)
+    {
+        printf("%02x ", data[i]);
+    }
+
     uint16_t checkSumrResult = 0;
     for (int i = 0; i < MAX_SAMPLE_DATA_SIZE; i++)
     {
@@ -279,23 +287,23 @@ void dataProcess(void)
                 {
                     if (distances[j] != 0)
                     {
-                        printf("[DEBUG] angles[%d] : %f => distances[%d] : %f\n", j, angles[j], j, distances[j]);
+                        printf("[DEBUG] angles[%2d] : %f => distances[%2d] : %f\r\n", j, angles[j], j, distances[j]);
                     }
                 }
             }
             else
             {
-                printf("[ERROR] Checksum error!\n");
+                printf("[ERROR] Checksum error!\r\n");
             }
 
 #ifdef YDLIDAR_DEBUG
-            printf("[DEBUG] data_packet->start_flag = %x\n", data_packet->start_flag);
-            printf("[DEBUG] data_packet->type_CT = %x\n", data_packet->type_CT);
-            printf("[DEBUG] data_packet->size_LSN = %x\n", data_packet->size_LSN);
-            printf("[DEBUG] data_packet->startAngle_FSA = %x\n", data_packet->startAngle_FSA);
-            printf("[DEBUG] data_packet->endAngle_LSA = %x\n", data_packet->endAngle_LSA);
-            printf("[DEBUG] data_packet->crc_CS = %x\n", data_packet->crc_CS);
-            printf("[DEBUG] calculate checksum = %x\n", checkSumrResult);
+            printf("[DEBUG] data_packet->start_flag = %x\r\n", data_packet->start_flag);
+            printf("[DEBUG] data_packet->type_CT = %x\r\n", data_packet->type_CT);
+            printf("[DEBUG] data_packet->size_LSN = %x\r\n", data_packet->size_LSN);
+            printf("[DEBUG] data_packet->startAngle_FSA = %x\r\n", data_packet->startAngle_FSA);
+            printf("[DEBUG] data_packet->endAngle_LSA = %x\r\n", data_packet->endAngle_LSA);
+            printf("[DEBUG] data_packet->crc_CS = %x\r\n", data_packet->crc_CS);
+            printf("[DEBUG] calculate checksum = %x\r\n", checkSumrResult);
 #endif
         }
     }
@@ -322,37 +330,37 @@ void restartScan(void)
     ydlidar_device_info_t deviceinfo;
     if (getDeviceInfo(&deviceinfo) == RESULT_OK)
     {
-        printf("[YDLIDAR INFO] Connection established in [%s]\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
-        printf("[YDLIDAR INFO] Firmware version: %d.%d\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
-        printf("[YDLIDAR INFO] Hardware version: %d\n", deviceinfo.hardware_version);
+        printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
+        printf("[YDLIDAR INFO] Firmware version: %d.%d\r\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
+        printf("[YDLIDAR INFO] Hardware version: %d\r\n", deviceinfo.hardware_version);
         printf("[YDLIDAR INFO] Serial number: ");
         for (int i = 0; i < 16; i++)
         {
             printf("%x", deviceinfo.serialnum[i]);
         }
-        printf("\n");
+        printf("\r\n");
         ydlidar_device_health_t healthinfo;
         HAL_Delay(1000);
         if (getDeviceHealth(&healthinfo) == RESULT_OK)
         {
-            printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\n", healthinfo.status == 0 ? "well" : "bad");
+            printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
             if (startScan() == RESULT_OK)
             {
                 startReceiveScanData();
-                printf("\nNow YDLIDAR is scanning ...... \n");
+                printf("\r\nNow YDLIDAR is scanning ...... \r\n");
             }
             else
             {
-                printf("start YDLIDAR is failed!  Continue........ \n");
+                printf("start YDLIDAR is failed!  Continue........ \r\n");
             }
         }
         else
         {
-            printf("cannot retrieve YDLIDAR health\n ");
+            printf("cannot retrieve YDLIDAR health\r\n ");
         }
     }
     else
     {
-        printf("YDLIDAR get DeviceInfo Error!!!'\n");
+        printf("YDLIDAR get DeviceInfo Error!!!'\r\n");
     }
 }

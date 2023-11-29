@@ -62,7 +62,7 @@ main-build: YDLIDAR.elf secondary-outputs
 
 # Tool invocations
 YDLIDAR.elf YDLIDAR.map: $(OBJS) $(USER_OBJS) D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\YDLIDAR\STM32F410RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "YDLIDAR.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\YDLIDAR\STM32F410RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="YDLIDAR.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "YDLIDAR.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\YDLIDAR\STM32F410RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="YDLIDAR.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

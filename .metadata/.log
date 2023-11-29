@@ -43,3 +43,9 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data D:\ENSEA\Coursen
 
 !ENTRY org.eclipse.cdt.core 1 0 2023-11-29 21:38:24.692
 !MESSAGE Indexed 'YDLIDAR' (22 sources, 82 headers) in 2.84 sec: 4,674 declarations; 23,720 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.007%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-11-29 22:07:35.892
+!MESSAGE Indexed 'YDLIDAR' (23 sources, 91 headers) in 1.14 sec: 5,695 declarations; 24,761 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0066%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-11-29 22:09:43.675
+!MESSAGE Indexed 'YDLIDAR' (23 sources, 91 headers) in 0.984 sec: 5,696 declarations; 24,763 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0066%)
