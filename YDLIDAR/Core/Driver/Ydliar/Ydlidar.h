@@ -32,7 +32,7 @@ typedef int8_t (*send_command_func)(uint8_t *cmd, uint32_t size);
 // receive data function
 typedef int8_t (*receive_data_func)(uint8_t *data, uint32_t size);
 
-#define MAX_SAMPLE_DATA_SIZE 600
+#define MAX_SCAN_POINTS 360
 // #define YDLIDAR_DEBUG
 // send and receive function struct
 typedef struct
@@ -93,6 +93,12 @@ typedef struct
     float distance;
     bool startBit;
 } __attribute__((packed)) ydlidar_scan_point_t;
+
+typedef struct
+{
+    double distance;
+    double angle;
+} ScanPoint_t;
 
 ///< The ydlidar structure for users
 typedef struct

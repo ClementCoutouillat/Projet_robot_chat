@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include "string.h"
+// #include "main.h"
 #include "Ydlidar.h"
 extern UART_HandleTypeDef huart1;
 extern uint8_t SCAN_CIRCLE_INDEX;
