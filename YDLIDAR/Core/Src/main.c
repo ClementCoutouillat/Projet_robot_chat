@@ -110,7 +110,6 @@ int main(void)
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    double distance = 3.444;
     while (1)
     {
         /* USER CODE END WHILE */

@@ -1,4 +1,4 @@
-22:22:53 **** Incremental Build of configuration Debug for project YDLIDAR ****
+08:11:14 **** Incremental Build of configuration Debug for project YDLIDAR ****
 make -j12 all 
 arm-none-eabi-gcc "../Core/Driver/Ydliar/Ydlidar.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F410Rx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"D:/ENSEA/Coursenensea/annee3/ESE/Systemes_a_microcontroleurs/TP/Projet_robot_chat/YDLIDAR/Core/Driver/Ydliar" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Driver/Ydliar/Ydlidar.d" -MT"Core/Driver/Ydliar/Ydlidar.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Driver/Ydliar/Ydlidar.o"
 arm-none-eabi-gcc -o "YDLIDAR.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\ENSEA\Coursenensea\annee3\ESE\Systemes_a_microcontroleurs\TP\Projet_robot_chat\YDLIDAR\STM32F410RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="YDLIDAR.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
@@ -7,11 +7,11 @@ Finished building target: YDLIDAR.elf
 arm-none-eabi-size   YDLIDAR.elf 
 arm-none-eabi-objdump -h -S  YDLIDAR.elf  > "YDLIDAR.list"
    text	   data	    bss	    dec	    hex	filename
-  32900	    476	   8188	  41564	   a25c	YDLIDAR.elf
+  32900	    476	   5788	  39164	   98fc	YDLIDAR.elf
 Finished building: default.size.stdout
  
 Finished building: YDLIDAR.list
  
 
-22:22:54 Build Finished. 0 errors, 0 warnings. (took 991ms)
+08:11:16 Build Finished. 0 errors, 0 warnings. (took 2s.90ms)
 
