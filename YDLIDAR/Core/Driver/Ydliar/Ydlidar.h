@@ -32,7 +32,8 @@ typedef int8_t (*send_command_func)(uint8_t *cmd, uint32_t size);
 // receive data function
 typedef int8_t (*receive_data_func)(uint8_t *data, uint32_t size);
 
-#define MAX_SCAN_POINTS 360
+#define MAX_SCAN_POINTS 100
+#define MAX_SCAN_BUFFER_SIZE 2
 // #define YDLIDAR_DEBUG
 // send and receive function struct
 typedef struct

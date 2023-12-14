@@ -48,7 +48,7 @@ extern ydlidar_t ydlidar;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart1_rx;
-
+DMA_HandleTypeDef hdma_usart1_tx;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -100,6 +100,10 @@ int main(void)
     MX_DMA_Init();
     MX_USART2_UART_Init();
     MX_USART1_UART_Init();
+    __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_TC);
+    __HAL_DMA_DISABLE_IT(&hdma_usart1_tx, DMA_IT_TC);
+
+
     /* USER CODE BEGIN 2 */
     ydlidar.func.send_command = uartSendCommand;
     ydlidar.func.receive_response = uartReceiveResponse;
