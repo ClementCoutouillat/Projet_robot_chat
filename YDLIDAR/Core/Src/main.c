@@ -100,8 +100,8 @@ int main(void)
     MX_DMA_Init();
     MX_USART2_UART_Init();
     MX_USART1_UART_Init();
-    __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_TC);
-    __HAL_DMA_DISABLE_IT(&hdma_usart1_tx, DMA_IT_TC);
+//    __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_TC);
+//    __HAL_DMA_DISABLE_IT(&hdma_usart1_tx, DMA_IT_TC);
 
 
     /* USER CODE BEGIN 2 */

@@ -11,6 +11,7 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 extern uint8_t SCAN_CIRCLE_INDEX;
 extern uint8_t PROCESS_SCAN_DATA_INDEX;
 extern bool receiveFlag;
+extern uint32_t receiveCount;
 int8_t uartSendCommand(uint8_t *cmd, uint32_t size)
 {
     HAL_UART_Transmit(&huart1, cmd, size, 1000);
@@ -34,12 +35,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART1)
     {
-        receiveFlag = true;
+        receiveCount++;
         SCAN_CIRCLE_INDEX = SCAN_CIRCLE_INDEX++ % MAX_SCAN_BUFFER_SIZE;
         if (SCAN_CIRCLE_INDEX == PROCESS_SCAN_DATA_INDEX)
         {
             receiveFlag = false;
             SCAN_CIRCLE_INDEX = (SCAN_CIRCLE_INDEX + MAX_SCAN_BUFFER_SIZE - 1) % MAX_SCAN_BUFFER_SIZE;
+        }
+        else
+        {
+            receiveFlag = true;
         }
         startReceiveScanData();
     }
