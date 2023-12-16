@@ -9,7 +9,6 @@
 ../Core/Driver/Ydliar/Ydlidar.c:196:6:AngleFirstLevelParse	72	static
 ../Core/Driver/Ydliar/Ydlidar.c:218:6:AngleSecondLevelParse	48	static
 ../Core/Driver/Ydliar/Ydlidar.c:245:6:startReceiveScanData	8	static
-../Core/Driver/Ydliar/Ydlidar.c:258:6:dataProcess	120	dynamic
-../Core/Driver/Ydliar/Ydlidar.c:350:6:dataProcess1	104	dynamic
-../Core/Driver/Ydliar/Ydlidar.c:418:6:reset	8	static
-../Core/Driver/Ydliar/Ydlidar.c:427:6:restartScan	40	static
+../Core/Driver/Ydliar/Ydlidar.c:258:6:dataProcess	136	dynamic
+../Core/Driver/Ydliar/Ydlidar.c:365:6:reset	8	static
+../Core/Driver/Ydliar/Ydlidar.c:374:6:restartScan	40	static

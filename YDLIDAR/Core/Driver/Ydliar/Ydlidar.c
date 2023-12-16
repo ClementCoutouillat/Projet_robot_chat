@@ -10,7 +10,7 @@ int currentPointIndex = 0;
 extern UART_HandleTypeDef huart1;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
-// #define YDLIDAR_DEBUG_LEVEL_2
+#define YDLIDAR_DEBUG_LEVEL_2
 
 /**
  * @brief This function is used to calculate the checksum of the data CRC16
@@ -321,10 +321,19 @@ void dataProcess(void)
                 parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);                                                       // parse the distance
                 AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles); // parse the first level angle
                 AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);                                   // parse the second level angle
+                for (int j = 0; j < data_packet->size_LSN; j++)
+                {
+                    if (distances[j] > 0.0f && distances[j] < 400.0f)
+                    {
+                        // scanBuffer[currentBuffer][currentPointIndex].angle = angles[j];
+                        // scanBuffer[currentBuffer][currentPointIndex].distance = distances[j];
+                        // currentPointIndex++;
+                    }
+                }
 #ifdef YDLIDAR_DEBUG_LEVEL_2
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
-                    printf("[DEBUG] angles[%02d] : %011.6f => distances[%02d] : %011.6f mm\r\n", j, angles[j], j, distances[j]);
+                    printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
                 }
 #endif
             }
@@ -346,69 +355,6 @@ void dataProcess(void)
     memset(scanPoints[PROCESS_SCAN_DATA_INDEX], 0, sizeof(scanPoints[PROCESS_SCAN_DATA_INDEX]));
     printf("receiveCount = %ld\r\n", receiveCount);
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
-}
-void dataProcess1(void)
-{
-    if (PROCESS_SCAN_DATA_INDEX >= 10)
-    {
-        PROCESS_SCAN_DATA_INDEX = 0;
-    }
-    if (PROCESS_SCAN_DATA_INDEX == SCAN_CIRCLE_INDEX)
-    {
-        return;
-    }
-    printf("[DEBUG] PROCESS_SCAN_DATA_INDEX = %d\r\n", PROCESS_SCAN_DATA_INDEX);
-    uint8_t *data = (uint8_t *)&scanPoints[PROCESS_SCAN_DATA_INDEX];
-
-    int i = 0;
-    while (i < MAX_SCAN_POINTS)
-    {
-        // 查找数据包的开始标志
-        if (data[i] == 0xAA && data[i + 1] == 0x55)
-        {
-            ydlidar_data_packet_t *data_packet = (ydlidar_data_packet_t *)&data[i];
-
-            // 检查数据包长度
-            if (i + sizeof(ydlidar_data_packet_t) + data_packet->size_LSN * sizeof(uint16_t) > MAX_SCAN_POINTS)
-            {
-                break; // 数据包不完整
-            }
-
-            // 计算校验和
-            uint16_t checkSumResult = calculateChecksum((uint8_t *)&data[i], data_packet->size_LSN + 2);
-
-            if (checkSumResult == data_packet->crc_CS)
-            {
-                double distances[data_packet->size_LSN];
-                double angles[data_packet->size_LSN];
-                parseDistance((uint16_t *)(data + i + sizeof(ydlidar_data_packet_t)), data_packet->size_LSN, distances);
-                AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, angles);
-                AngleSecondLevelParse(angles, data_packet->size_LSN, distances);
-
-                // 打印数据
-                for (int j = 0; j < data_packet->size_LSN; j++)
-                {
-                    if (distances[j] != 0)
-                    {
-                        printf("[DEBUG] angles[%2d] : %f => distances[%2d] : %f\r\n", j, angles[j], j, distances[j]);
-                    }
-                }
-            }
-            else
-            {
-                printf("[ERROR] Checksum error!\r\n");
-            }
-
-            // 移动到下一个可能的数据包起始位置
-            i += sizeof(ydlidar_data_packet_t) + data_packet->size_LSN * sizeof(uint16_t);
-        }
-        else
-        {
-            i++;
-        }
-    }
-
-    PROCESS_SCAN_DATA_INDEX++;
 }
 
 /**
