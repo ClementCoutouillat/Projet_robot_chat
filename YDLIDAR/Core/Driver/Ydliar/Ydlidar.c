@@ -10,7 +10,7 @@ int currentPointIndex = 0;
 extern UART_HandleTypeDef huart1;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
-#define YDLIDAR_DEBUG_LEVEL_2
+// #define YDLIDAR_DEBUG_LEVEL_2
 
 /**
  * @brief This function is used to calculate the checksum of the data CRC16
@@ -259,7 +259,7 @@ void dataProcess(void)
 {
     if (receiveFlag == false)
     {
-        printf("[DEBUG] receiveFlag = false,wai t for receive data\r\n");
+        printf("[DEBUG] receiveFlag = false,waiting for receive data\r\n");
         return;
     }
     // printf("[DEBUG] PROCESS_SCAN_DATA_INDEX = %d, SCAN_CIRCLE_INDEX = %d\r\n", PROCESS_SCAN_DATA_INDEX, SCAN_CIRCLE_INDEX);
@@ -429,39 +429,38 @@ void restartScan(void)
     stopScan();
     HAL_Delay(1000);
     ydlidar_device_info_t deviceinfo;
-    if (getDeviceInfo(&deviceinfo) == RESULT_OK)
+    // get device info until success
+    while (getDeviceInfo(&deviceinfo) != RESULT_OK)
     {
-        printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
-        printf("[YDLIDAR INFO] Firmware version: %d.%d\r\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
-        printf("[YDLIDAR INFO] Hardware version: %d\r\n", deviceinfo.hardware_version);
-        printf("[YDLIDAR INFO] Serial number: ");
-        for (int i = 0; i < 16; i++)
-        {
-            printf("%x", deviceinfo.serialnum[i]);
-        }
-        printf("\r\n");
-        ydlidar_device_health_t healthinfo;
+        // reset the microcontroller
+        printf("YDLIDAR get DeviceInfo Error!!!\r\n");
         HAL_Delay(1000);
-        if (getDeviceHealth(&healthinfo) == RESULT_OK)
-        {
-            printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
-            if (startScan() == RESULT_OK)
-            {
-                startReceiveScanData();
-                printf("\r\nNow YDLIDAR is scanning ...... \r\n");
-            }
-            else
-            {
-                printf("start YDLIDAR is failed!  Continue........ \r\n");
-            }
-        }
-        else
-        {
-            printf("cannot retrieve YDLIDAR health\r\n ");
-        }
+    }
+    printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
+    printf("[YDLIDAR INFO] Firmware version: %d.%d\r\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
+    printf("[YDLIDAR INFO] Hardware version: %d\r\n", deviceinfo.hardware_version);
+    printf("[YDLIDAR INFO] Serial number: ");
+    for (int i = 0; i < 16; i++)
+    {
+        printf("%x", deviceinfo.serialnum[i]);
+    }
+    printf("\r\n");
+    ydlidar_device_health_t healthinfo;
+    HAL_Delay(1000);
+    // get device health until success
+    while (getDeviceHealth(&healthinfo) != RESULT_OK)
+    {
+        printf("cannot retrieve YDLIDAR health\r\n ");
+        HAL_Delay(1000);
+    }
+    printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
+    if (startScan() == RESULT_OK)
+    {
+        startReceiveScanData();
+        printf("\r\nNow YDLIDAR is scanning ...... \r\n");
     }
     else
     {
-        printf("YDLIDAR get DeviceInfo Error!!!'\r\n");
+        printf("start YDLIDAR is failed!  Continue........ \r\n");
     }
 }
