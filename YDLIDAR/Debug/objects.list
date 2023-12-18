@@ -1,3 +1,6 @@
+"./Core/Driver/Balance/avoidObstacle.o"
+"./Core/Driver/Balance/filter.o"
+"./Core/Driver/Balance/system.o"
 "./Core/Driver/Ydliar/Ydlidar.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"

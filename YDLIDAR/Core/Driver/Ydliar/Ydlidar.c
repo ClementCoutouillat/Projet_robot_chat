@@ -4,13 +4,13 @@
 #include "string.h"
 
 ydlidar_t ydlidar;
-ScanPoint_t scanBuffer[2][MAX_SCAN_POINTS];
+ScanPoint_t PointDataProcess[MAX_SCAN_POINTS];
 int currentBuffer = 0;
 int currentPointIndex = 0;
 extern UART_HandleTypeDef huart1;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
-#define YDLIDAR_DEBUG_LEVEL_2
+// #define YDLIDAR_DEBUG_LEVEL_2
 
 /**
  * @brief This function is used to calculate the checksum of the data CRC16
@@ -234,7 +234,7 @@ void AngleSecondLevelParse(double *angles, int LSN, double *distances)
     }
 }
 
-uint8_t scanPoints[MAX_SCAN_BUFFER_SIZE][MAX_SCAN_POINTS];
+uint8_t ydlidarUartRawData[MAX_SCAN_BUFFER_SIZE][MAX_SCAN_POINTS];
 uint8_t SCAN_CIRCLE_INDEX = 0;
 uint8_t PROCESS_SCAN_DATA_INDEX = 0;
 
@@ -244,7 +244,7 @@ uint8_t PROCESS_SCAN_DATA_INDEX = 0;
  */
 void startReceiveScanData(void)
 {
-    ydlidar.func.receive_data_dma(scanPoints[SCAN_CIRCLE_INDEX], sizeof(scanPoints[SCAN_CIRCLE_INDEX]));
+    ydlidar.func.receive_data_dma(ydlidarUartRawData[SCAN_CIRCLE_INDEX], sizeof(ydlidarUartRawData[SCAN_CIRCLE_INDEX]));
 }
 
 /**
@@ -264,7 +264,7 @@ void dataProcess(void)
     }
     // printf("[DEBUG] PROCESS_SCAN_DATA_INDEX = %d, SCAN_CIRCLE_INDEX = %d\r\n", PROCESS_SCAN_DATA_INDEX, SCAN_CIRCLE_INDEX);
 
-    uint8_t *data = (uint8_t *)&scanPoints[PROCESS_SCAN_DATA_INDEX];
+    uint8_t *data = (uint8_t *)&ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX];
 #ifdef YDLIDAR_DEBUG_LEVEL_2
     for (int i = 0; i < MAX_SCAN_POINTS; i++)
     {
@@ -314,6 +314,7 @@ void dataProcess(void)
             printf("[DEBUG] checkSumrResult = %4x\r\n", checkSumrResult);
             printf("[DEBUG] data_packet->crc_CS = %4x\r\n", data_packet->crc_CS);
 #endif
+
             if (checkSumrResult == data_packet->crc_CS)
             {
                 double distances[data_packet->size_LSN];
@@ -325,15 +326,20 @@ void dataProcess(void)
                 {
                     if (distances[j] > 0.0f && distances[j] < 400.0f)
                     {
-                        // scanBuffer[currentBuffer][currentPointIndex].angle = angles[j];
-                        // scanBuffer[currentBuffer][currentPointIndex].distance = distances[j];
+                        // PointDataProcess[currentBuffer][currentPointIndex].angle = angles[j];
+                        // PointDataProcess[currentBuffer][currentPointIndex].distance = distances[j];
                         // currentPointIndex++;
                     }
                 }
+                // print start angle and end angle
+                printf("[DEBUG] startAngle_FSA = %05.2f => endAngle_LSA = %06.2f\r\n", angles[0], angles[data_packet->size_LSN - 1]);
 #ifdef YDLIDAR_DEBUG_LEVEL_2
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
-                    printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
+                    if (distances[j] > 0.0f && distances[j] < 500.0f)
+                    {
+                        printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
+                    }
                 }
 #endif
             }
@@ -352,7 +358,7 @@ void dataProcess(void)
     }
     receiveFlag = false;
     // clear the buffer
-    memset(scanPoints[PROCESS_SCAN_DATA_INDEX], 0, sizeof(scanPoints[PROCESS_SCAN_DATA_INDEX]));
+    memset(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX], 0, sizeof(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX]));
     printf("receiveCount = %ld\r\n", receiveCount);
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
 }

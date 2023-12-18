@@ -13,6 +13,7 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include Core/Driver/Ydliar/subdir.mk
+-include Core/Driver/Balance/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
