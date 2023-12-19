@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -110,6 +111,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM17_Init();
   MX_TIM15_Init();
   MX_TIM16_Init();
@@ -118,7 +120,6 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM7_Init();
   MX_USART4_UART_Init();
-
   /* USER CODE BEGIN 2 */
     // TODO: put the init function here
     restartScan();
