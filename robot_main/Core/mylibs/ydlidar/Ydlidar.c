@@ -7,7 +7,7 @@ ydlidar_t ydlidar;
 ScanPoint_t PointDataProcess[MAX_SCAN_POINTS];
 int currentBuffer = 0;
 int currentPointIndex = 0;
-extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart4;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
 // #define YDLIDAR_DEBUG_LEVEL_2
@@ -415,4 +415,23 @@ void restartScan(void)
     {
         printf("start YDLIDAR is failed!  Continue........ \r\n");
     }
+}
+
+// task to run the ydlidar
+void task_ydlidar(void *argument)
+{
+    uint32_t lastWakeTime = getSysTickCnt();
+
+    while (1)
+    {
+        vTaskDelayUntil(&lastWakeTime, F2T(RATE_10_HZ));
+        dataProcess();
+    }
+}
+
+// create the task to start the scan
+void createYdlidarTask(void)
+{
+    printf("[INFO]: Create YDLIDAR task.\r\n");
+    xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 1, NULL);
 }

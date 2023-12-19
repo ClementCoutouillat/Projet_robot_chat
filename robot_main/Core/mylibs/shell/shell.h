@@ -18,7 +18,7 @@
 #define BUFFER_SIZE 40
 #define SHELL_FUNC_LIST_MAX_SIZE 64
 
-struct h_shell_struct;
+typedef struct h_shell_struct h_shell_t;
 
 typedef uint8_t (*drv_shell_transmit_t)(char *data, uint16_t size);
 typedef uint8_t (*drv_shell_receive_t)(char *data, uint16_t size);

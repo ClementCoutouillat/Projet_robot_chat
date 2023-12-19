@@ -14,7 +14,7 @@
 
 h_shell_t h_shell;
 // add two parameters from the shell
-int add(h_shell_t *h_shell, int argc, char **argv)
+int32_t add(h_shell_t *h_shell, int argc, char **argv)
 {
     int a, b;
     if (argc != 3)

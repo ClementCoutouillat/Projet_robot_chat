@@ -36,7 +36,7 @@ void LedTask(void *argument)
     vTaskDelete(NULL);
 }
 
-int led(h_shell_t *h_shell, int argc, char **argv)
+int32_t led(h_shell_t *h_shell, int argc, char **argv)
 {
     if (argc != 2)
     {

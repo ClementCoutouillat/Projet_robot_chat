@@ -8,7 +8,7 @@
 #include "stdlib.h"
 
 ///< register shell function : led on/off and preiod
-int led(h_shell_t *h_shell, int argc, char **argv);
+int32_t led(h_shell_t *h_shell, int argc, char **argv);
 
 void LedTask(void *argument); // led task
 void createLedTask(void);     // create led task

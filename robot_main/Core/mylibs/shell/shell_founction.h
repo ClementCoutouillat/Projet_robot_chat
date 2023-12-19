@@ -10,7 +10,7 @@
 #include "cmsis_os.h"
 
 ///< register shell function : add
-int add(h_shell_t *h_shell, int argc, char **argv);
+int32_t add(h_shell_t *h_shell, int argc, char **argv);
 
 void createShellTask(void);
 

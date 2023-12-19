@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "cmsis_os.h"
 
-static int sh_help(h_shell_t *h_shell, int argc, char **argv)
+static int32_t sh_help(h_shell_t *h_shell, int argc, char **argv)
 {
     int i;
     for (i = 0; i < h_shell->shell_func_list_size; i++)

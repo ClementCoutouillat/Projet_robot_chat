@@ -74,7 +74,7 @@
 /* USER CODE BEGIN MESSAGE_BUFFER_LENGTH_TYPE */
 /* Defaults to size_t for backward compatibility, but can be changed
    if lengths will always be less than the number of bytes in a size_t. */
-#define configMESSAGE_BUFFER_LENGTH_TYPE         size_t
+#define configMESSAGE_BUFFER_LENGTH_TYPE size_t
 /* USER CODE END MESSAGE_BUFFER_LENGTH_TYPE */
 
 /* Co-routine definitions. */
@@ -88,14 +88,20 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelete                  1
 #define INCLUDE_vTaskCleanUpResources        0
 #define INCLUDE_vTaskSuspend                 1
-#define INCLUDE_vTaskDelayUntil              0
+#define INCLUDE_vTaskDelayUntil              1
 #define INCLUDE_vTaskDelay                   1
 #define INCLUDE_xTaskGetSchedulerState       1
 
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 /* USER CODE BEGIN 1 */
-#define configASSERT( x ) if ((x) == 0) {taskDISABLE_INTERRUPTS(); for( ;; );}
+#define configASSERT(x)           \
+    if ((x) == 0)                 \
+    {                             \
+        taskDISABLE_INTERRUPTS(); \
+        for (;;)                  \
+            ;                     \
+    }
 /* USER CODE END 1 */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
@@ -110,6 +116,11 @@ standard names. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+// ms to OS Ticks
+#define M2T(X) ((unsigned int)((X) * (configTICK_RATE_HZ / 1000.0)))
+// OS Ticks to ms
+#define F2T(X) ((unsigned int)((configTICK_RATE_HZ / (X))))
+
 /* USER CODE END Defines */
 
 #endif /* FREERTOS_CONFIG_H */

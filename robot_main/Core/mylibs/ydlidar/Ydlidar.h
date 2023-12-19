@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "system.h"
 
 #define YDLIDER_CMD_SYNC_BYTE 0xA5
 #define YDLIDER_CMD_STOP 0x65
@@ -34,6 +35,7 @@ typedef int8_t (*receive_data_func)(uint8_t *data, uint32_t size);
 
 #define MAX_SCAN_POINTS 360
 #define MAX_SCAN_BUFFER_SIZE 2
+
 // #define YDLIDAR_DEBUG
 // send and receive function struct
 typedef struct
@@ -134,5 +136,5 @@ void reset(void);
 void sendCommand(uint8_t cmd);
 ///< receive response header
 result_t receiveResponseHeader(ydlidar_response_header_t *response_header);
-
+void createYdlidarTask(void);
 #endif // __DYLIDER_H__

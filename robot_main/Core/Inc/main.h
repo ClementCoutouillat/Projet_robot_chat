@@ -73,14 +73,6 @@ void Error_Handler(void);
 #define BORDER_FRONT_Pin GPIO_PIN_3
 #define BORDER_FRONT_GPIO_Port GPIOD
 #define BORDER_FRONT_EXTI_IRQn EXTI2_3_IRQn
-#define BUMPER3_Pin GPIO_PIN_6
-#define BUMPER3_GPIO_Port GPIOB
-#define BUMPER2_Pin GPIO_PIN_7
-#define BUMPER2_GPIO_Port GPIOB
-#define BUMPER1_Pin GPIO_PIN_8
-#define BUMPER1_GPIO_Port GPIOB
-#define BUMPER0_Pin GPIO_PIN_9
-#define BUMPER0_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -7,6 +7,9 @@
     "string": "c",
     "string_view": "c",
     "robotparameter.h": "c",
-    "shell.h": "c"
+    "shell.h": "c",
+    "cmsis_os.h": "c",
+    "freertos.h": "c",
+    "freertosconfig.h": "c"
   }
 }
