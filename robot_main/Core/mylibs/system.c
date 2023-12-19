@@ -1,4 +1,7 @@
 #include "system.h"
+
+extern ScanPointCount_t PointDataProcess[MaxScanPointCount];
+
 static uint32_t sysTickCnt = 0;
 uint32_t getSysTickCnt(void)
 {

@@ -4,9 +4,8 @@
 #include "string.h"
 
 ydlidar_t ydlidar;
-ScanPoint_t PointDataProcess[MAX_SCAN_POINTS];
-int currentBuffer = 0;
-int currentPointIndex = 0;
+ScanPointCount_t PointDataProcess[MaxScanPointCount] = {0};
+uint8_t PointDataProcessIndex = 0;
 extern UART_HandleTypeDef huart4;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
@@ -193,7 +192,7 @@ void parseDistance(uint16_t *rawDistance, int LSN, double *realDistance)
  * @param LSN  The number of the sample data
  * @param angles  The angle after parse
  */
-void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
+void AngleFirstLevelParse1(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
 {
     // calculate start angle and end angle
     double startAngle = (double)(FSA >> 1) / 64.0;
@@ -205,6 +204,41 @@ void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
     for (int i = 0; i < LSN; i++)
     {
         angles[i] = startAngle + angleResolution * i;
+    }
+}
+/**
+ * @brief This function is used to parse the angle
+ *
+ * @param FSA  The start angle
+ * @param LSA  The end angle
+ * @param LSN  The number of the sample data
+ * @param angles  The angle after parse
+ */
+void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
+{
+    // calculate start angle and end angle
+    double startAngle = (double)(FSA >> 1) / 64.0;
+    double endAngle = (double)(LSA >> 1) / 64.0;
+    if (startAngle > endAngle)
+    {
+        double angleResolution = (360.0 - startAngle + endAngle) / (double)(LSN - 1);
+        for (int i = 0; i < LSN; i++)
+        {
+            angles[i] = startAngle + angleResolution * i;
+            if (angles[i] > 360.0)
+            {
+                angles[i] -= 360.0;
+            }
+        }
+    }
+    else
+    {
+        // calculate angle resolution
+        double angleResolution = (endAngle - startAngle) / (double)(LSN);
+        for (int i = 0; i < LSN; i++)
+        {
+            angles[i] = startAngle + angleResolution * i;
+        }
     }
 }
 
@@ -308,7 +342,6 @@ void dataProcess(void)
             {
                 sampleDatas_SI[j] = sampledata[j];
             }
-            // checkSumrResult += calculateChecksum(sampledata, data_packet->size_LSN); // calculate the checksum
 #ifdef YDLIDAR_DEBUG_LEVEL_2
             printf("[DEBUG] dataIndex = %d\r\n", dataIndex);
             printf("[DEBUG] checkSumrResult = %4x\r\n", checkSumrResult);
@@ -322,15 +355,17 @@ void dataProcess(void)
                 parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);                                                       // parse the distance
                 AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles); // parse the first level angle
                 AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);                                   // parse the second level angle
+                uint8_t distancesIndex = 0;
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
-                    if (distances[j] > 0.0f && distances[j] < 400.0f)
+                    if (distances[j] != 0.0f)
                     {
-                        // PointDataProcess[currentBuffer][currentPointIndex].angle = angles[j];
-                        // PointDataProcess[currentBuffer][currentPointIndex].distance = distances[j];
-                        // currentPointIndex++;
+                        PointDataProcess[PointDataProcessIndex].scanPoint[distancesIndex].angle = angles[j];
+                        PointDataProcess[PointDataProcessIndex].scanPoint[distancesIndex].distance = distances[j];
+                        PointDataProcess[PointDataProcessIndex].count = distancesIndex + 1;
                     }
                 }
+                PointDataProcessIndex = (PointDataProcessIndex + 1) % MaxScanPointCount;
                 // print start angle and end angle
                 printf("[DEBUG] startAngle_FSA = %05.2f => endAngle_LSA = %06.2f\r\n", angles[0], angles[data_packet->size_LSN - 1]);
 #ifdef YDLIDAR_DEBUG_LEVEL_2
