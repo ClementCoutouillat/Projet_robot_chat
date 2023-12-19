@@ -101,6 +101,7 @@ NVIC.TIM1_BRK_UP_TRG_COM_IRQn=true\:3\:0\:false\:false\:true\:true\:true\:true\:
 NVIC.TIM3_IRQn=true\:3\:0\:false\:false\:true\:true\:true\:true\:true
 NVIC.TIM7_IRQn=true\:3\:0\:false\:false\:true\:true\:true\:true\:true
 NVIC.USART2_IRQn=true\:3\:0\:false\:false\:true\:true\:true\:true\:true
+NVIC.USART3_4_IRQn=true\:3\:0\:false\:false\:true\:true\:true\:true\:true
 PA0.GPIOParameters=GPIO_Label
 PA0.GPIO_Label=LIDAR_TX
 PA0.Locked=true
