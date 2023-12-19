@@ -59,6 +59,24 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// Task handle
+TaskHandle_t StartTask_Handler;
+void start_task(void *pvParameters)
+{
+    taskENTER_CRITICAL(); // enter critical section
+    // Create LED task
+    createLedTask();
+    // Create shell task
+    createShellTask();
+    // Create board task
+    // createBoardTask();
+    // Create ydlidar task
+    // createYdlidarTask();
+    // Create balance task
+    // createBalanceTask();
+    vTaskDelete(StartTask_Handler); // delete start task
+    taskEXIT_CRITICAL();            // exit critical section
+}
 
 /* USER CODE END 0 */
 
@@ -100,9 +118,14 @@ int main(void)
     MX_USART4_UART_Init();
     /* USER CODE BEGIN 2 */
     printf("\r\n\r\n>>>>>>>>>>>>>>Projet Robot Start<<<<<<<<<<<<<<\r\n");
-    createShellTask();
-    createLedTask();
+    xTaskCreate((TaskFunction_t)start_task, // task function
+                (const char *)"start_task", // task name
+                (uint16_t)256,              // stack size
+                (void *)NULL,               // parameter
+                (UBaseType_t)1,             // priority
+                (TaskHandle_t *)&StartTask_Handler);
     vTaskStartScheduler();
+
     /* USER CODE END 2 */
 
     /* Call init function for freertos objects (in freertos.c) */

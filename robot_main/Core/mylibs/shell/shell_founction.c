@@ -45,7 +45,7 @@ void task_shell(void *argument)
     drv_uart_init();
     shell_init(&h_shell);
     registerShellCommands(&h_shell);
-    printf("[INFO]: Shell init done\r\n");
+    printf("[INFO]: Shell init success.\r\n");
     while (1)
     {
         shell_run(&h_shell);

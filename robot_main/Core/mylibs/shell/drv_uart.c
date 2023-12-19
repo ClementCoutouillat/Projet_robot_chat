@@ -23,7 +23,7 @@ int drv_uart_init()
     }
     else
     {
-        printf("[INFO]: Semaphore create success.\r\n");
+        printf("[INFO]: Shell uart semaphore create success.\r\n");
     }
     return 0;
 }
