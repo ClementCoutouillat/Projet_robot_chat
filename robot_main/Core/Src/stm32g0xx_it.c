@@ -134,8 +134,26 @@ void SysTick_Handler(void)
   */
 void EXTI2_3_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI2_3_IRQn 0 */
+ /* USER CODE BEGIN EXTI2_3_IRQn 0 */
+ //If border_back interruption
+ if (__HAL_GPIO_EXTI_GET_IT(BORDER_BACK_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BORDER_BACK_Pin);
+		char msg[] = "BORDER_BACK \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  HAL_GPIO_TogglePin(GPIOB, LED_ORANGE_Pin);
+		//TODO : fonction_change_direction(direction);
+	}
+ //If border_back interruption
+	if (__HAL_GPIO_EXTI_GET_IT(BORDER_FRONT_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BORDER_FRONT_Pin);
 
+		char msg[] = "BORDER_FRONT \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  HAL_GPIO_TogglePin(GPIOB, LED_ORANGE_Pin);
+		//TODO : fonction_change_direction(direction);
+	}
   /* USER CODE END EXTI2_3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(BORDER_BACK_Pin);
   HAL_GPIO_EXTI_IRQHandler(BORDER_FRONT_Pin);
