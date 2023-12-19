@@ -61,6 +61,12 @@ void Error_Handler(void);
 #define LIDAR_TX_GPIO_Port GPIOA
 #define LIDAR_RX_Pin GPIO_PIN_1
 #define LIDAR_RX_GPIO_Port GPIOA
+#define LED_RED_Pin GPIO_PIN_11
+#define LED_RED_GPIO_Port GPIOB
+#define LED_ORANGE_Pin GPIO_PIN_12
+#define LED_ORANGE_GPIO_Port GPIOB
+#define LED_GREEN_Pin GPIO_PIN_13
+#define LED_GREEN_GPIO_Port GPIOB
 #define BORDER_BACK_Pin GPIO_PIN_2
 #define BORDER_BACK_GPIO_Port GPIOD
 #define BORDER_BACK_EXTI_IRQn EXTI2_3_IRQn

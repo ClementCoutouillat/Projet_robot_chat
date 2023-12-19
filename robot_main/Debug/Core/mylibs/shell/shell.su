@@ -1,0 +1,5 @@
+../Core/mylibs/shell/shell.c:15:12:sh_help	48	static
+../Core/mylibs/shell/shell.c:28:5:shell_init	24	static
+../Core/mylibs/shell/shell.c:39:5:shell_add	24	static
+../Core/mylibs/shell/shell.c:53:12:shell_exec	72	static
+../Core/mylibs/shell/shell.c:92:6:shell_run	40	static

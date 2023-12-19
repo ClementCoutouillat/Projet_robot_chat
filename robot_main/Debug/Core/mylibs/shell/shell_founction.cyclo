@@ -1,0 +1,4 @@
+../Core/mylibs/shell/shell_founction.c:17:5:add	2
+../Core/mylibs/shell/shell_founction.c:31:6:registerShellCommands	1
+../Core/mylibs/shell/shell_founction.c:39:6:task_shell	1
+../Core/mylibs/shell/shell_founction.c:55:6:createShellTask	1

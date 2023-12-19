@@ -1,0 +1,4 @@
+../Core/mylibs/shell/shell_founction.c:17:5:add	32	static
+../Core/mylibs/shell/shell_founction.c:31:6:registerShellCommands	16	static
+../Core/mylibs/shell/shell_founction.c:39:6:task_shell	24	static
+../Core/mylibs/shell/shell_founction.c:55:6:createShellTask	16	static

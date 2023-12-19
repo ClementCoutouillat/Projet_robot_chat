@@ -1,0 +1,5 @@
+../Core/mylibs/shell/drv_uart.c:16:5:drv_uart_init	2
+../Core/mylibs/shell/drv_uart.c:31:6:shell_uart_receive_irq_cb	2
+../Core/mylibs/shell/drv_uart.c:40:9:drv_uart_receive	1
+../Core/mylibs/shell/drv_uart.c:47:9:drv_uart_transmit	1
+../Core/mylibs/shell/drv_uart.c:54:6:HAL_UART_RxCpltCallback	2

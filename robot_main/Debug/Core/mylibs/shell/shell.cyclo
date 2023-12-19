@@ -1,0 +1,5 @@
+../Core/mylibs/shell/shell.c:15:12:sh_help	2
+../Core/mylibs/shell/shell.c:28:5:shell_init	1
+../Core/mylibs/shell/shell.c:39:5:shell_add	2
+../Core/mylibs/shell/shell.c:53:12:shell_exec	6
+../Core/mylibs/shell/shell.c:92:6:shell_run	6
