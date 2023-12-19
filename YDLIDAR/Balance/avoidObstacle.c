@@ -14,9 +14,9 @@ float target_limit_float(float insert, float low, float high)
 }
 void Drive_Motor(float Vx, float Vy, float Vz)
 {
-    float amplitude = 3.5; // Wheel target speed limit 
+    float amplitude = 3.5; // Wheel target speed limit
 
-    // Inverse kinematics 
+    // Inverse kinematics
     MOTOR_A.Target = Vx - Vz * WHEEL_DISTANCE / 2.0f; // calculate the target speed of the left wheel
     MOTOR_B.Target = Vx + Vz * WHEEL_DISTANCE / 2.0f; // calculate the target speed of the right wheel
 
@@ -28,12 +28,12 @@ void Drive_Motor(float Vx, float Vy, float Vz)
 void avoidObstacle(void)
 {
     int8_t i = 0;
-    int8_t angle_cnt = 0; // 用于判断50个点中需要做避障的点
+    int8_t angle_cnt = 0; // 用于判断15个点中需要做避障的点
     float angle_sum = 0;
     static int Avoid_Distance = 255;
-    for (i = 0; i < 50; i++)
+    for (i = 0; i < 15; i++)
     {
-        if (0 < PointDataProcess[i].distance && PointDataProcess[i].distance < Avoid_Distance) // 距离小于220mm需要避障,只需要50度范围内点
+        if (0 < PointDataProcess[i].distance && PointDataProcess[i].distance < Avoid_Distance) // 距离小于220mm需要避障,只需要15度范围内点
         {
             if (PointDataProcess[i].angle < 50)
                 angle_sum += PointDataProcess[i].angle;
