@@ -1,3 +1,0 @@
-../Core/mylibs/led/led.c:20:6:LedTask	16	static
-../Core/mylibs/led/led.c:39:5:led	32	static
-../Core/mylibs/led/led.c:70:6:createLedTask	16	static
