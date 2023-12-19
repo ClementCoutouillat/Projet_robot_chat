@@ -1,0 +1,7 @@
+../mylibs/dcMotor.c:22:6:stopMotor	1
+../mylibs/dcMotor.c:37:6:startMotor	1
+../mylibs/dcMotor.c:51:6:setSpeed	1
+../mylibs/dcMotor.c:58:6:dcMotorInit	1
+../mylibs/dcMotor.c:86:6:speedCompute	7
+../mylibs/dcMotor.c:142:6:speedCompute2	7
+../mylibs/dcMotor.c:192:6:HAL_TIM_PeriodElapsedCallback	7

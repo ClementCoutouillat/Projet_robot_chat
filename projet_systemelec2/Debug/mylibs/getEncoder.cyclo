@@ -1,0 +1,5 @@
+../mylibs/getEncoder.c:14:6:startEncoder	1
+../mylibs/getEncoder.c:24:9:getMotorDirectionfromEncoder	1
+../mylibs/getEncoder.c:34:10:getEncoderValue	1
+../mylibs/getEncoder.c:45:10:getEncoderValue2	1
+../mylibs/getEncoder.c:60:10:getMotorSpeedfromEncoder	1
