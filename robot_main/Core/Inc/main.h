@@ -57,6 +57,24 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LIDAR_TX_Pin GPIO_PIN_0
+#define LIDAR_TX_GPIO_Port GPIOA
+#define LIDAR_RX_Pin GPIO_PIN_1
+#define LIDAR_RX_GPIO_Port GPIOA
+#define BORDER_BACK_Pin GPIO_PIN_2
+#define BORDER_BACK_GPIO_Port GPIOD
+#define BORDER_BACK_EXTI_IRQn EXTI2_3_IRQn
+#define BORDER_FRONT_Pin GPIO_PIN_3
+#define BORDER_FRONT_GPIO_Port GPIOD
+#define BORDER_FRONT_EXTI_IRQn EXTI2_3_IRQn
+#define BUMPER3_Pin GPIO_PIN_6
+#define BUMPER3_GPIO_Port GPIOB
+#define BUMPER2_Pin GPIO_PIN_7
+#define BUMPER2_GPIO_Port GPIOB
+#define BUMPER1_Pin GPIO_PIN_8
+#define BUMPER1_GPIO_Port GPIOB
+#define BUMPER0_Pin GPIO_PIN_9
+#define BUMPER0_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
