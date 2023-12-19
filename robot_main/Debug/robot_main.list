@@ -4100,7 +4100,7 @@ int shell_init(h_shell_t *h_shell)
  8001808:	687b      	ldr	r3, [r7, #4]
  800180a:	2200      	movs	r2, #0
  800180c:	601a      	str	r2, [r3, #0]
-    size = snprintf(h_shell->print_buffer, BUFFER_SIZE, "[INFO]:Monsieur Shell v0.2 Init\r\n");
+    size = snprintf(h_shell->print_buffer, BUFFER_SIZE, "[INFO]: Monsieur Shell v0.2 Init\r\n");
  800180e:	687b      	ldr	r3, [r7, #4]
  8001810:	22c1      	movs	r2, #193	; 0xc1
  8001812:	0092      	lsls	r2, r2, #2

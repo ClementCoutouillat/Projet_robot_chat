@@ -1,5 +1,8 @@
 .history
 .vscode
 .metadata
-# .history/
 .metadata/
+./robot_main/Debug/*
+robot_main/Debug/*
+robot_main/Debug/
+YDLIDAR/*
