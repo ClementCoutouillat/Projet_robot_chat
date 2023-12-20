@@ -31,6 +31,7 @@
 #include "ydlidar.h"
 #include "board.h"
 #include "bumper.h"
+#include "dcMotor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,11 +74,11 @@ void start_task(void *pvParameters)
     // Create shell task
     createShellTask();
     // Create board task
-   createBoardTask();
+    // createBoardTask();
     // Create bumper task
-   createBumperTask();
+    // createBumperTask();
     // Create ydlidar task
-//    createYdlidarTask();
+    //    createYdlidarTask();
     // Create balance task
     // createBalanceTask();
     vTaskDelete(StartTask_Handler); // delete start task
@@ -125,7 +126,19 @@ int main(void)
     MX_USART4_UART_Init();
     /* USER CODE BEGIN 2 */
     // TODO: put the init function here
-//    restartScan();
+    //    restartScan();
+    PIDInit();
+    dcMotorInit();
+    HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_TIM_Base_Start_IT(&htim7);
+    HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+    HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+
+    HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
 
     printf("\r\n\r\n>>>>>>>>>>>>>>Projet Robot Start<<<<<<<<<<<<<<\r\n");
     xTaskCreate((TaskFunction_t)start_task, // task function
