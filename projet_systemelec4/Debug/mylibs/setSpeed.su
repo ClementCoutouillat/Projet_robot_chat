@@ -1,0 +1,11 @@
+../mylibs/setSpeed.c:27:6:dcmotor_dir	16	static
+../mylibs/setSpeed.c:55:6:dcmotor_dir2	16	static
+../mylibs/setSpeed.c:86:6:dcmotor_speed	16	static
+../mylibs/setSpeed.c:104:6:dcmotor_speed2	16	static
+../mylibs/setSpeed.c:122:6:motor_pwm_set	24	static
+../mylibs/setSpeed.c:138:6:motor_pwm_set2	24	static
+../mylibs/setSpeed.c:162:6:isSpeedValid	24	static
+../mylibs/setSpeed.c:193:7:extractSpeed	24	static
+../mylibs/setSpeed.c:217:9:changeSpeedToPWM	24	static
+../mylibs/setSpeed.c:239:6:speedProcess2	32	static
+../mylibs/setSpeed.c:263:6:speedProcess	16	static
