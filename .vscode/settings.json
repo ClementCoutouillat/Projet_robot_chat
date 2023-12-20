@@ -11,6 +11,7 @@
     "cmsis_os.h": "c",
     "freertos.h": "c",
     "freertosconfig.h": "c",
-    "ydlidar.h": "c"
+    "ydlidar.h": "c",
+    "compare": "c"
   }
 }
