@@ -34,8 +34,8 @@ typedef int8_t (*send_command_func)(uint8_t *cmd, uint32_t size);
 typedef int8_t (*receive_data_func)(uint8_t *data, uint32_t size);
 
 #define MAX_SCAN_POINTS 360
-#define MAX_SCAN_BUFFER_SIZE 2
-#define MaxScanPointCount 15
+#define MAX_SCAN_BUFFER_SIZE 1
+#define MaxScanPointCount 10
 
 // #define YDLIDAR_DEBUG
 // send and receive function struct
@@ -110,7 +110,7 @@ typedef struct
 {
     ScanPoint_t scanPoint[40];
     uint16_t count;
-} ScanPointCount_t;
+} ScanPointData_t;
 
 ///< The ydlidar structure for users
 typedef struct

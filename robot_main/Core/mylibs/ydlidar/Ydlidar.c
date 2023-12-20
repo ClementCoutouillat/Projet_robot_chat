@@ -4,7 +4,7 @@
 #include "string.h"
 
 ydlidar_t ydlidar;
-ScanPointCount_t PointDataProcess[MaxScanPointCount] = {0};
+ScanPointData_t PointDataProcess[MaxScanPointCount] = {0};
 uint8_t PointDataProcessIndex = 0;
 extern UART_HandleTypeDef huart4;
 
@@ -114,8 +114,6 @@ void stopScan()
  */
 result_t startScan()
 {
-    stopScan();
-    HAL_Delay(1000);
     sendCommand(YDLIDER_CMD_SCAN);
     ydlidar_response_header_t response_header;
     receiveResponseHeader(&response_header);
@@ -366,8 +364,7 @@ void dataProcess(void)
                     }
                 }
                 PointDataProcessIndex = (PointDataProcessIndex + 1) % MaxScanPointCount;
-                // print start angle and end angle
-                printf("[DEBUG] startAngle_FSA = %05.2f => endAngle_LSA = %06.2f\r\n", angles[0], angles[data_packet->size_LSN - 1]);
+
 #ifdef YDLIDAR_DEBUG_LEVEL_2
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
@@ -396,6 +393,8 @@ void dataProcess(void)
     memset(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX], 0, sizeof(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX]));
     printf("receiveCount = %ld\r\n", receiveCount);
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
+    PointDataProcessIndex = 0;
+    stopScan();
 }
 
 /**
@@ -414,14 +413,14 @@ void reset()
 void restartScan(void)
 {
     stopScan();
-    HAL_Delay(1000);
+    HAL_Delay(100);
     ydlidar_device_info_t deviceinfo;
     // get device info until success
     while (getDeviceInfo(&deviceinfo) != RESULT_OK)
     {
         // reset the microcontroller
         printf("YDLIDAR get DeviceInfo Error!!!\r\n");
-        HAL_Delay(1000);
+        HAL_Delay(100);
     }
     printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
     printf("[YDLIDAR INFO] Firmware version: %d.%d\r\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
@@ -433,12 +432,12 @@ void restartScan(void)
     }
     printf("\r\n");
     ydlidar_device_health_t healthinfo;
-    HAL_Delay(1000);
+    HAL_Delay(100);
     // get device health until success
     while (getDeviceHealth(&healthinfo) != RESULT_OK)
     {
         printf("cannot retrieve YDLIDAR health\r\n ");
-        HAL_Delay(1000);
+        HAL_Delay(100);
     }
     printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
     if (startScan() == RESULT_OK)
@@ -461,6 +460,7 @@ void task_ydlidar(void *argument)
     {
         vTaskDelayUntil(&lastWakeTime, F2T(RATE_10_HZ));
         dataProcess();
+        xTaskNotifyGive(AvoidTask_Handler);
     }
 }
 
