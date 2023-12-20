@@ -73,11 +73,11 @@ void start_task(void *pvParameters)
     // Create shell task
     createShellTask();
     // Create board task
-    createBoardTask();
+   createBoardTask();
     // Create bumper task
-    createBumperTask();
+   createBumperTask();
     // Create ydlidar task
-    createYdlidarTask();
+//    createYdlidarTask();
     // Create balance task
     // createBalanceTask();
     vTaskDelete(StartTask_Handler); // delete start task
@@ -125,7 +125,7 @@ int main(void)
     MX_USART4_UART_Init();
     /* USER CODE BEGIN 2 */
     // TODO: put the init function here
-    restartScan();
+//    restartScan();
 
     printf("\r\n\r\n>>>>>>>>>>>>>>Projet Robot Start<<<<<<<<<<<<<<\r\n");
     xTaskCreate((TaskFunction_t)start_task, // task function
