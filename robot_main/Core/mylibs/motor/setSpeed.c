@@ -28,16 +28,15 @@ void dcmotor_dir(uint8_t para)
 {
 
     HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
-
+    // HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
+    // HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
     if (para == 0)
     {
         HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
         HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
-        HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
+        //  HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
+        // HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
 
         // __HAL_TIM_SetCompare(&htim17 , TIM_CHANNEL_1, 600);  //  motor1 avancer    para为设置比较器的�??
         // __HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_2, 600);  //motor2 avancer
@@ -46,9 +45,9 @@ void dcmotor_dir(uint8_t para)
     {
         HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
         HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
-        HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
-        //  __HAL_TIM_SetCompare(&htim16 , TIM_CHANNEL_1, 300);  //  motor1 reculer
+        // HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
+        // HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
+        //   __HAL_TIM_SetCompare(&htim16 , TIM_CHANNEL_1, 300);  //  motor1 reculer
         //__HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_1, 300);  // motor2 reculer
     }
 }
@@ -56,25 +55,26 @@ void dcmotor_dir(uint8_t para)
 void dcmotor_dir2(uint8_t para)
 {
 
-    HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
     HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
+    // HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
+    // HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
 
     if (para == 0)
     {
-        HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
+        // HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
+        // HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
         HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
         HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
 
         // __HAL_TIM_SetCompare(&htim17 , TIM_CHANNEL_1, 600);  //  motor1 avancer    para为设置比较器的�??
         // __HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_2, 600);  //motor2 avancer
+        //__HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_1, 300);  // motor2 reculer
     }
     else if (para == 1)
     {
-        HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
+        // HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+        // HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
         HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
         HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
         //  __HAL_TIM_SetCompare(&htim16 , TIM_CHANNEL_1, 300);  //  motor1 reculer
@@ -93,8 +93,8 @@ void dcmotor_speed(uint16_t para)
     */
     __HAL_TIM_SetCompare(&htim17, TIM_CHANNEL_1, para); // PB9   para为占空比的百分比乘以周期时间
     __HAL_TIM_SetCompare(&htim16, TIM_CHANNEL_1, para); // PB15
-    __HAL_TIM_SetCompare(&htim15, TIM_CHANNEL_2, para); // PB9
-    __HAL_TIM_SetCompare(&htim15, TIM_CHANNEL_1, para); // PB15
+    // __HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_2, para);  //PB9
+    // __HAL_TIM_SetCompare(&htim15 , TIM_CHANNEL_1, para);  //PB15
 }
 
 void dcmotor_speed2(uint16_t para)
@@ -106,8 +106,8 @@ void dcmotor_speed2(uint16_t para)
         __HAL_TIM_SetCompare(&htim16 , TIM_CHANNEL_1, para);  //PB9
         __HAL_TIM_SetCompare(&htim14 , TIM_CHANNEL_1, para);  //PB15
     */
-    __HAL_TIM_SetCompare(&htim17, TIM_CHANNEL_1, para); // PB9   para为占空比的百分比乘以周期时间
-    __HAL_TIM_SetCompare(&htim16, TIM_CHANNEL_1, para); // PB15
+    //  __HAL_TIM_SetCompare(&htim17 , TIM_CHANNEL_1, para);  //PB9   para为占空比的百分比乘以周期时间
+    //__HAL_TIM_SetCompare(&htim16 , TIM_CHANNEL_1, para);  //PB15
     __HAL_TIM_SetCompare(&htim15, TIM_CHANNEL_2, para); // PB9
     __HAL_TIM_SetCompare(&htim15, TIM_CHANNEL_1, para); // PB15
 }
@@ -253,7 +253,7 @@ void speedProcess2(int numberofCmdArg, char *cmdArg[])
 void speedProcess(int numberofCmdArg, char *cmdArg[])
 {
     // check if the number of argument is correct
-    if (numberofCmdArg != 3)
+    if (numberofCmdArg != 4)
     {
         printf("[ERROR]: Invalid number of argument\r\n");
         return;
@@ -264,22 +264,25 @@ void speedProcess(int numberofCmdArg, char *cmdArg[])
         printf("[ERROR]: Invalid speed\r\n");
         return;
     }
-    /*
-         gSpeedPID.SetPoint = extractSpeed(cmdArg[1]);
-     //   printf("gSpeedPID.SetPoint dans le extractspeed %f\r\n",gSpeedPID.SetPoint);
-        // limit the speed
-        if (gSpeedPID.SetPoint > MAX_SPEED)   //MAX_SPEED : 300 tour/minute
-        {
-            gSpeedPID.SetPoint = MAX_SPEED;
-        }
-        else if (gSpeedPID.SetPoint < -MAX_SPEED)
-        {
-            gSpeedPID.SetPoint = -MAX_SPEED;
-        }
-    */
+    if (!isSpeedValid(cmdArg[3]))
+    {
+        printf("[ERROR]: Invalid speed\r\n");
+        return;
+    }
+    gSpeedPID.SetPoint = extractSpeed(cmdArg[2]);
+    //   printf("gSpeedPID.SetPoint dans le extractspeed %f\r\n",gSpeedPID.SetPoint);
+    // limit the speed
+    if (gSpeedPID.SetPoint > MAX_SPEED) // MAX_SPEED : 300 tour/minute
+    {
+        gSpeedPID.SetPoint = MAX_SPEED;
+    }
+    else if (gSpeedPID.SetPoint < -MAX_SPEED)
+    {
+        gSpeedPID.SetPoint = -MAX_SPEED;
+    }
 
     // 调试motor2
-    gSpeedPID2.SetPoint = extractSpeed(cmdArg[1]);
+    gSpeedPID2.SetPoint = extractSpeed(cmdArg[3]);
     if (gSpeedPID2.SetPoint > MAX_SPEED) // MAX_SPEED : 300 tour/minute
     {
         gSpeedPID2.SetPoint = MAX_SPEED;
@@ -288,4 +291,5 @@ void speedProcess(int numberofCmdArg, char *cmdArg[])
     {
         gSpeedPID2.SetPoint = -MAX_SPEED;
     }
+    printf("[INFO]: Set speed to %f, %f\r\n", gSpeedPID.SetPoint, gSpeedPID2.SetPoint);
 }

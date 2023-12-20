@@ -34,13 +34,13 @@ int32_t add(h_shell_t *h_shell, int argc, char **argv)
 int32_t motorCommand(h_shell_t *h_shell, int argc, char **argv)
 {
     // founction to control the motor
-    if (!strcmp(argv[0], "start"))
+    if (!strcmp(argv[1], "start"))
     {
         startMotor();
         printf("[INFO]: Start the motor\r\n");
     }
     // detect the stop command
-    else if (!strcmp(argv[0], "stop"))
+    else if (!strcmp(argv[1], "stop"))
     {
         stopMotor();
         printf("[INFO]: Stop the motor\r\n");
@@ -48,7 +48,7 @@ int32_t motorCommand(h_shell_t *h_shell, int argc, char **argv)
     // detect the speed
     else if (!strcmp(argv[1], "speed"))
     {
-        if (argc != 3)
+        if (argc != 4)
         {
             printf("[INFO]: Usage:m speed <speed>\r\n");
             return -1;
@@ -56,7 +56,7 @@ int32_t motorCommand(h_shell_t *h_shell, int argc, char **argv)
         setSpeed(argc, argv);
     }
     // debug pid kp ki kd
-    else if (!strcmp(argv[0], "debug"))
+    else if (!strcmp(argv[1], "debug"))
     {
         setPIDparam(argc, argv);
     }

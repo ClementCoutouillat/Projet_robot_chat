@@ -42,15 +42,18 @@ int getEncoderValue(void)
     return Encoder_Count;
 }
 
+
 int getEncoderValue2(void)
 {
-	int Encoder_Count = 0;
+    int Encoder_Count = 0;
     /* Get the current counter value */
-    Encoder_Count = __HAL_TIM_GET_COUNTER(&htim1); //motor 2
+    Encoder_Count = __HAL_TIM_GET_COUNTER(&htim1); //motor 1
+   // printf("Encoder_Count:%d\r\n",Encoder_Count);
     /* Add the overflow count to the counter value */
     Encoder_Count += Encoder_Overflow_Count2 * 65536;
     return Encoder_Count;
 }
+
 
 /**
  * @brief Get the Current Encoder Speed

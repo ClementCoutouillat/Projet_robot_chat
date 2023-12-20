@@ -67,6 +67,7 @@ void startMotor(void);
 // Set the Speed with the command : speed <speed>
 void setSpeed(int numberofCmdArg, char *cmdArg[]);
 
+void moteur_controle(float m_gauche,float m_droite);
 // compute speed per xxx ms
 
 void speedCompute2(int encode_now, uint8_t computePerms);

@@ -16,7 +16,7 @@
 
 
 extern uint16_t Encoder_Overflow_Count;
-extern uint16_t Encoder_Overflow_Count2;
+extern int Encoder_Overflow_Count2;
 // function to start the encoder
 void startEncoder(void);
 // get speed of the encoder
