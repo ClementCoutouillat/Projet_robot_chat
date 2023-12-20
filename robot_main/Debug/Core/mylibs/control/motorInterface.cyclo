@@ -1,0 +1,6 @@
+../Core/mylibs/control/motorInterface.c:5:6:carInit	1
+../Core/mylibs/control/motorInterface.c:8:6:carLeft	1
+../Core/mylibs/control/motorInterface.c:12:6:carRight	1
+../Core/mylibs/control/motorInterface.c:16:6:carForward	1
+../Core/mylibs/control/motorInterface.c:20:6:carBackward	1
+../Core/mylibs/control/motorInterface.c:24:6:carStop	1

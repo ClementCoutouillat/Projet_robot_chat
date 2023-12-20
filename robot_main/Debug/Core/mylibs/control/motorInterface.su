@@ -1,0 +1,6 @@
+../Core/mylibs/control/motorInterface.c:5:6:carInit	8	static
+../Core/mylibs/control/motorInterface.c:8:6:carLeft	8	static
+../Core/mylibs/control/motorInterface.c:12:6:carRight	8	static
+../Core/mylibs/control/motorInterface.c:16:6:carForward	8	static
+../Core/mylibs/control/motorInterface.c:20:6:carBackward	8	static
+../Core/mylibs/control/motorInterface.c:24:6:carStop	8	static

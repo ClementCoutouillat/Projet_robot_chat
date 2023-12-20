@@ -1,0 +1,2 @@
+../Core/mylibs/bumper/bumper.c:3:6:BumperTask	16	static
+../Core/mylibs/bumper/bumper.c:13:6:createBumperTask	16	static

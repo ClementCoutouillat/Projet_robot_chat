@@ -1,0 +1,4 @@
+../Core/Src/main.c:69:6:start_task	1
+../Core/Src/main.c:94:5:main	1
+../Core/Src/main.c:176:6:SystemClock_Config	3
+../Core/Src/main.c:222:6:Error_Handler	1

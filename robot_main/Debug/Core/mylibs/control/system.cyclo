@@ -1,0 +1,3 @@
+../Core/mylibs/control/system.c:9:10:getSysTickCnt	2
+../Core/mylibs/control/system.c:25:6:Avoid	20
+../Core/mylibs/control/system.c:121:6:createSystemTask	1
