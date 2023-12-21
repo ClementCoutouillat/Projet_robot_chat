@@ -125,6 +125,8 @@ typedef uint8_t result_t;
 #define RESULT_OK 0
 #define RESULT_FAIL -1
 
+///< INit hte Ydlidar
+void YdlidarInit(void);
 ///< get device info
 result_t getDeviceInfo(ydlidar_device_info_t *device_info);
 ///< get device health

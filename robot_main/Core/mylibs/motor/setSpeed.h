@@ -11,8 +11,8 @@
 
 #include "stdbool.h"
 #include "stdio.h"
+#include "dcMotor.h"
 
-#define MAX_SPEED 300
 #define MAX_PWM_DUTY_CYCLE 90
 #define DIRECTION_FORWARD 1
 #define DIRECTION_BACKWARD -1

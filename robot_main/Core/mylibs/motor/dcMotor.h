@@ -15,6 +15,7 @@
 #include "getEncoder.h"
 #include "PIDControl.h"
 
+#define MAX_SPEED 300
 #define SPEED_COMPUTE_PER_S 1000 / 100
 #define SECONDPERMINUTE 60.0f
 // define the PWM Duty Cycle for stop the motor
@@ -30,20 +31,20 @@
 ///<  change rpm to rad/s
 #define RPM2RAD 0.104719755f
 
-#define GEAR_RATIO  20
+#define GEAR_RATIO 20
 
 #define MOTOR_STATE_START 1
 #define MOTOR_STATE_STOP 0
 
-//#define ENABLE_MOTOR HAL_GPIO_WritePin(MOTOR_ENABLE_GPIO_Port, MOTOR_ENABLE_Pin, GPIO_PIN_SET)
-//#define DISABLE_MOTOR HAL_GPIO_WritePin(MOTOR_ENABLE_GPIO_Port, MOTOR_ENABLE_Pin, GPIO_PIN_RESET)
+// #define ENABLE_MOTOR HAL_GPIO_WritePin(MOTOR_ENABLE_GPIO_Port, MOTOR_ENABLE_Pin, GPIO_PIN_SET)
+// #define DISABLE_MOTOR HAL_GPIO_WritePin(MOTOR_ENABLE_GPIO_Port, MOTOR_ENABLE_Pin, GPIO_PIN_RESET)
 extern TIM_HandleTypeDef htim1;
 
 typedef struct
 {
     int encode_old; /* old encode value */
     int encode_now; /* current encode value */
-    float speed;         /* current speed */
+    float speed;    /* current speed */
 } EncoderTypeDef;
 
 typedef struct
@@ -67,11 +68,13 @@ void startMotor(void);
 // Set the Speed with the command : speed <speed>
 void setSpeed(int numberofCmdArg, char *cmdArg[]);
 
-void moteur_controle(float m_gauche,float m_droite);
+void moteur_controle(float m_gauche, float m_droite);
 // compute speed per xxx ms
 
 void speedCompute2(int encode_now, uint8_t computePerms);
 
 void speedCompute(int encode_now, uint8_t computePerms);
 
+void moteur_controle(float m_gauche, float m_droite);
+void tourne_modeur(float angle);
 #endif /* DCMOTOR_H_ */

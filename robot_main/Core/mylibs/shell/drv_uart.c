@@ -51,10 +51,11 @@ uint8_t drv_uart_transmit(char *str, uint16_t size)
 }
 
 // uart interrupt callback
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    if (huart->Instance == UART_NAME)
-    {
-        shell_uart_receive_irq_cb();
-    }
-}
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+// {
+//     if (huart->Instance == UART_NAME)
+//     {
+//         shell_uart_receive_irq_cb();
+//     }
+    
+// }

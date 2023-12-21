@@ -252,7 +252,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                 gMotorData2.motorPWM = -2560;
             }
             motor_pwm_set(gMotorData.motorPWM);
-            motor_pwm_set2(gMotorData.motorPWM);
+            motor_pwm_set2(gMotorData2.motorPWM);
         }
     }
 }

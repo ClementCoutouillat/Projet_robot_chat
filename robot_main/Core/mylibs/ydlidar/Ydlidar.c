@@ -2,6 +2,7 @@
 #include "main.h"
 #include "math.h"
 #include "string.h"
+#include "myuart.h"
 
 ydlidar_t ydlidar;
 ScanPointData_t PointDataProcess[MaxScanPointCount] = {0};
@@ -10,6 +11,13 @@ extern UART_HandleTypeDef huart4;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
 // #define YDLIDAR_DEBUG_LEVEL_2
+
+void YdlidarInit(void)
+{
+    ydlidar.func.send_command = uartSendCommand;
+    ydlidar.func.receive_response = uartReceiveResponse;
+    ydlidar.func.receive_data_dma = uartReceiveDataDMA;
+}
 
 /**
  * @brief This function is used to calculate the checksum of the data CRC16
@@ -291,7 +299,7 @@ void dataProcess(void)
 {
     if (receiveFlag == false)
     {
-        printf("[DEBUG] receiveFlag = false,waiting for receive data\r\n");
+        printf("[DEBUG] receiveFlag = false, waiting for receive data\r\n");
         return;
     }
     // printf("[DEBUG] PROCESS_SCAN_DATA_INDEX = %d, SCAN_CIRCLE_INDEX = %d\r\n", PROCESS_SCAN_DATA_INDEX, SCAN_CIRCLE_INDEX);
@@ -364,7 +372,13 @@ void dataProcess(void)
                     }
                 }
                 PointDataProcessIndex = (PointDataProcessIndex + 1) % MaxScanPointCount;
-
+                for (int j = 0; j < data_packet->size_LSN; j++)
+                {
+                    if (distances[j] > 0.0f && distances[j] < 1000.0f)
+                    {
+                        printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
+                    }
+                }
 #ifdef YDLIDAR_DEBUG_LEVEL_2
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
@@ -420,7 +434,7 @@ void restartScan(void)
     {
         // reset the microcontroller
         printf("YDLIDAR get DeviceInfo Error!!!\r\n");
-        HAL_Delay(100);
+        HAL_Delay(1000);
     }
     printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
     printf("[YDLIDAR INFO] Firmware version: %d.%d\r\n", deviceinfo.major_firmware_version, deviceinfo.minor_firmware_version);
@@ -468,5 +482,5 @@ void task_ydlidar(void *argument)
 void createYdlidarTask(void)
 {
     printf("[INFO]: Create YDLIDAR task.\r\n");
-    xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 1, NULL);
+    xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 3, NULL);
 }
