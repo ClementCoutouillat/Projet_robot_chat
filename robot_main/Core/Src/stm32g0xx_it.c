@@ -183,7 +183,7 @@ void EXTI4_15_IRQHandler(void)
 
 		char msg[] = "Contact Bumper 1 \n\r";
 		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
-  BUMPER1_FLAG = false;
+  		BUMPER1_FLAG = true;
   
 		// TODO : SET/RESET Variable 'Chat'
 		// TODO : Change Direction
@@ -195,7 +195,7 @@ void EXTI4_15_IRQHandler(void)
 
 		char msg[] = "Contact Bumper 2 \n\r";
 		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
-  BUMPER2_FLAG = false;
+  		BUMPER2_FLAG = true;
   
 		// TODO : SET/RESET Variable 'Chat'
 		// TODO : Change Direction
@@ -206,9 +206,9 @@ void EXTI4_15_IRQHandler(void)
 
 		char msg[] = "Contact Bumper 3 \n\r";
 		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
-  BUMPER3_FLAG = false;
+  		BUMPER3_FLAG = true;
 		
-  // TODO : SET/RESET Variable 'Chat'
+  		// TODO : SET/RESET Variable 'Chat'
 		// TODO : Change Direction
 	}
 	if (__HAL_GPIO_EXTI_GET_IT(BUMPER4_Pin) != RESET)
@@ -217,7 +217,7 @@ void EXTI4_15_IRQHandler(void)
 
 		char msg[] = "Contact Bumper 4 \n\r";
 		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
-  BUMPER4_FLAG = false;
+  		BUMPER4_FLAG = true;
   
 		// TODO : SET/RESET Variable 'Chat'
 		// TODO : Change Direction
