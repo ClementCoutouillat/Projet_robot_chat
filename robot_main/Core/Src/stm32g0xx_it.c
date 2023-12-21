@@ -32,6 +32,10 @@
 /* USER CODE BEGIN TD */
 bool BORDER_BACK_FLAG = false;
 bool BORDER_FRONT_FLAG = false;
+bool BUMPER1_FLAG = false;
+bool BUMPER2_FLAG = false;
+bool BUMPER3_FLAG = false;
+bool BUMPER4_FLAG = false;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -173,12 +177,56 @@ void EXTI2_3_IRQHandler(void)
 void EXTI4_15_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
+  	if (__HAL_GPIO_EXTI_GET_IT(BUMPER1_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BUMPER1_Pin);
 
+		char msg[] = "Contact Bumper 1 \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  BUMPER1_FLAG = false;
+  
+		// TODO : SET/RESET Variable 'Chat'
+		// TODO : Change Direction
+	}
+
+	if (__HAL_GPIO_EXTI_GET_IT(BUMPER2_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BUMPER2_Pin);
+
+		char msg[] = "Contact Bumper 2 \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  BUMPER2_FLAG = false;
+  
+		// TODO : SET/RESET Variable 'Chat'
+		// TODO : Change Direction
+	}
+	if (__HAL_GPIO_EXTI_GET_IT(BUMPER3_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BUMPER3_Pin);
+
+		char msg[] = "Contact Bumper 3 \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  BUMPER3_FLAG = false;
+		
+  // TODO : SET/RESET Variable 'Chat'
+		// TODO : Change Direction
+	}
+	if (__HAL_GPIO_EXTI_GET_IT(BUMPER4_Pin) != RESET)
+	{
+		__HAL_GPIO_EXTI_CLEAR_IT(BUMPER4_Pin);
+
+		char msg[] = "Contact Bumper 4 \n\r";
+		HAL_UART_Transmit(&huart2,(uint8_t*) msg, sizeof(msg), HAL_MAX_DELAY);
+  BUMPER4_FLAG = false;
+  
+		// TODO : SET/RESET Variable 'Chat'
+		// TODO : Change Direction
+	}
   /* USER CODE END EXTI4_15_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
+  HAL_GPIO_EXTI_IRQHandler(BUMPER1_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BUMPER2_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BUMPER3_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BUMPER4_Pin);
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 
   /* USER CODE END EXTI4_15_IRQn 1 */
