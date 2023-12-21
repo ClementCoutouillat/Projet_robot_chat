@@ -13,7 +13,7 @@ EncoderTypeDef gencodeSpeed2;
 MotorTypeDef gMotorData;
 MotorTypeDef gMotorData2;
 uint16_t Encoder_Overflow_Count = 0;
-int Encoder_Overflow_Count2 = 0;
+uint16_t Encoder_Overflow_Count2 = 0;
 
 /**
  * @brief stop the motor by stop the PWM with the command: stop
@@ -22,9 +22,9 @@ int Encoder_Overflow_Count2 = 0;
 void stopMotor(void)
 {
     HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_1);
-   // HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+    // HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim15, TIM_CHANNEL_2);
-   // HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+    // HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
     HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim17, TIM_CHANNEL_1);
     gMotorData.state = MOTOR_STATE_STOP;
@@ -40,7 +40,6 @@ void startMotor(void)
     HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
-
 }
 /**
  * @brief Set the Speed with the command : speed <speed>
@@ -88,18 +87,11 @@ void speedCompute(int encode_now, uint8_t computePerms)
     if (speedComputeCount == computePerms)
     {
         gencodeSpeed.encode_now = encode_now;
-   //     printf("now:%d\r\n",gencodeSpeed.encode_now);
-  //      printf("gencodeSpeed.encode_old:%d\r\n",gencodeSpeed.encode_old);
         gencodeSpeed.speed = (encode_now - gencodeSpeed.encode_old);
-    //    printf("avant:%f\r\n", gMotorData.speed);
-      //  printf("123\n");
-//SPEED_COMPUTE_PER_S /  1s
-        //calculte speed motor (tour/minute) : g_encode.speed * ((1000 / 100ms) *60 )/44/20  maxspeed （300*2pi/60）  现在是rpm 每分钟
-       speedArray[speedArrayFilterIndex++] = (float)(gencodeSpeed.speed * (SPEED_COMPUTE_PER_S /computePerms )* 60  / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND/GEAR_RATIO);//*RPM2RADGEAR_RATIO
-  //     gMotorData.speed = (float)(gencodeSpeed.speed * (SPEED_COMPUTE_PER_S / computePerms ) / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND/GEAR_RATIO);//*RPM2RAD
-      //  printf("speedcompute:%f\r\n", gMotorData.speed);  //gMotorData.speed
+        // calculte speed motor (tour/minute) : g_encode.speed * ((1000 / 100ms) *60 )/44/20  maxspeed （300*2pi/60）  现在是rpm 每分钟
+        speedArray[speedArrayFilterIndex++] = (float)(gencodeSpeed.speed * (SPEED_COMPUTE_PER_S / computePerms) * 60 / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND / GEAR_RATIO); //*RPM2RADGEAR_RATIO
         gencodeSpeed.encode_old = gencodeSpeed.encode_now;
-       //  after 10 times of speed calculation, filter the speed data
+        //  after 10 times of speed calculation, filter the speed data
         if (speedArrayFilterIndex == 10)
         {
             // bubble sort
@@ -138,25 +130,15 @@ void speedCompute(int encode_now, uint8_t computePerms)
     speedComputeCount++;
 }
 
-
-
 void speedCompute2(int encode_now, uint8_t computePerms)
 {
     if (speedComputeCount2 == computePerms)
     {
         gencodeSpeed2.encode_now = encode_now;
-   //     printf("now:%d\r\n",gencodeSpeed.encode_now);
-  //      printf("gencodeSpeed.encode_old:%d\r\n",gencodeSpeed.encode_old);
         gencodeSpeed2.speed = (encode_now - gencodeSpeed2.encode_old);
-    //    printf("avant:%f\r\n", gMotorData.speed);
-      //  printf("123\n");
-//SPEED_COMPUTE_PER_S /  1s
-        //calculte speed motor (tour/minute) : g_encode.speed * ((1000 / 100ms) *60 )/44/20  maxspeed （300*2pi/60）  现在是rpm 每分钟
-       speedArray2[speedArrayFilterIndex2++] = (float)(gencodeSpeed2.speed * (SPEED_COMPUTE_PER_S /computePerms )* 60  / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND/GEAR_RATIO);//*RPM2RADGEAR_RATIO
-  //     gMotorData.speed = (float)(gencodeSpeed.speed * (SPEED_COMPUTE_PER_S / computePerms ) / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND/GEAR_RATIO);//*RPM2RAD
-      //  printf("speedcompute:%f\r\n", gMotorData.speed);  //gMotorData.speed
+        speedArray2[speedArrayFilterIndex2++] = (float)(gencodeSpeed2.speed * (SPEED_COMPUTE_PER_S / computePerms) * 60 / ENCODER_MODE_DIVISION / ENCODER_COUNT_PER_ROUND / GEAR_RATIO); //*RPM2RADGEAR_RATIO
         gencodeSpeed2.encode_old = gencodeSpeed2.encode_now;
-       //  after 10 times of speed calculation, filter the speed data
+        //  after 10 times of speed calculation, filter the speed data
         if (speedArrayFilterIndex2 == 10)
         {
             // bubble sort
@@ -195,90 +177,82 @@ void speedCompute2(int encode_now, uint8_t computePerms)
     speedComputeCount2++;
 }
 
-void moteur_controle(float m_gauche,float m_droite)
+void moteur_controle(float m_gauche, float m_droite)
 {
-	 gSpeedPID.SetPoint = m_gauche;
-	 gSpeedPID2.SetPoint = m_droite;
-	 gMotorData.state = MOTOR_STATE_START;
-
+    gSpeedPID.SetPoint = m_gauche;
+    gSpeedPID2.SetPoint = m_droite;
+    gMotorData.state = MOTOR_STATE_START;
 }
 
-
-//pc6 pc7 timer3  motor 1
-//timer1 motor2
+// pc6 pc7 timer3  motor 1
+// timer1 motor2
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM3)   //encooder compter  motor 1
+    if (htim->Instance == TIM3) // encooder compter  motor 1
     {
-      //   Determine the current counter counting direction
+        //   Determine the current counter counting direction
         if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
         //     underflow, count down
-        { Encoder_Overflow_Count--;
-
+        {
+            Encoder_Overflow_Count--;
         }
-        else{
-          //   overflow, count up
+        else
+        {
+            //   overflow, count up
             Encoder_Overflow_Count++;
-
         }
     }
-    else if (htim->Instance == TIM1)  //encooder compter  motor 1
+    else if (htim->Instance == TIM1) // encooder compter  motor 1
     {
         /* Determine the current counter counting direction */
         if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
-            /* underflow, count down */
-        { Encoder_Overflow_Count2--;
-       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13); //vert
+        /* underflow, count down */
+        {
+            Encoder_Overflow_Count2--;
+            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13); // vert
         }
-        else{
+        else
+        {
             /* overflow, count up */
             Encoder_Overflow_Count2++;
-        HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12); //orange
+            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12); // orange
         }
     }
-    else if (htim->Instance == TIM7)   //every 100ms call the interruption for calculte PID
+    else if (htim->Instance == TIM7) // every 100ms call the interruption for calculte PID
     {
-        int encoderValueNow = getEncoderValue();
-        int encoderValueNow2 = getEncoderValue2();
-      //  printf("encoderValueNow:%ld\r\n", encoderValueNow);
+        int32_t encoderValueNow = getEncoderValue();
+        int32_t encoderValueNow2 = getEncoderValue2();
+        // printf("eNow: %d\r\n", encoderValueNow);
+        // printf("eNow2: %d\r\n", encoderValueNow2);
         speedCompute(encoderValueNow, 1);
-      // printf("speedcompute:%f\r\n", gMotorData.speed);  //gMotorData.speed*/
-
         speedCompute2(encoderValueNow2, 1);
-        // printf("speedcompute2:%f\r\n", gMotorData2.speed);  //gMotorData.speed
-
-        if (gMotorData.state == MOTOR_STATE_START)  //MOTOR_STATE_START call in setSpeed
+        // printf("speed: %f\r\n", gMotorData.speed);
+        // printf("speed1: %f\r\n", gMotorData2.speed);
+        if (gMotorData.state == MOTOR_STATE_START) // MOTOR_STATE_START call in setSpeed
         {
-        //	printf("%.2f, %.2f\n", gSpeedPID.SetPoint, gMotorData.speed);
-            gMotorData.motorPWM = incrementPIDControl(&gSpeedPID, gMotorData.speed); //gMotorData.speed is set in speedCompute
-        //    printf("gMotorData.speed is： %f\r\n ",gMotorData.motorPWM);
-            if(gMotorData.motorPWM >= 2560)                     /* ÏÞËÙ */
+            gMotorData.motorPWM = incrementPIDControl(&gSpeedPID, gMotorData.speed); // gMotorData.speed is set in speedCompute
+            if (gMotorData.motorPWM >= 2560)                                         /* ÏÞËÙ */
             {
-            	gMotorData.motorPWM = 2560;
+                gMotorData.motorPWM = 2560;
             }
             else if (gMotorData.motorPWM <= -2560)
             {
-            	gMotorData.motorPWM = -2560;
+                gMotorData.motorPWM = -2560;
             }
-        //    printf("gMotorData.speed limite is： %f\r\n ",gMotorData.motorPWM);
+            //    printf("gMotorData.speed limite is： %f\r\n ",gMotorData.motorPWM);
 
+            gMotorData2.motorPWM = incrementPIDControl2(&gSpeedPID2, gMotorData2.speed); // gMotorData.speed is set in speedCompute
 
-            gMotorData2.motorPWM = incrementPIDControl2(&gSpeedPID2, gMotorData2.speed); //gMotorData.speed is set in speedCompute
-
-            if(gMotorData2.motorPWM >= 2560)                     /* ÏÞËÙ */
+            if (gMotorData2.motorPWM >= 2560) /* ÏÞËÙ */
             {
-            	gMotorData2.motorPWM = 2560;
+                gMotorData2.motorPWM = 2560;
             }
             else if (gMotorData2.motorPWM <= -2560)
             {
-            	gMotorData2.motorPWM = -2560;
+                gMotorData2.motorPWM = -2560;
             }
-
-          // setPWMdutyCiclePID(gMotorData.motorPWM);
-         //  motor_pwm_set( changeSpeedToPWM(gMotorData.motorPWM));
-          motor_pwm_set(gMotorData.motorPWM);
-          motor_pwm_set2(gMotorData2.motorPWM);
+            motor_pwm_set(gMotorData.motorPWM);
+            motor_pwm_set2(gMotorData.motorPWM);
         }
     }
 }
-

@@ -10,7 +10,6 @@
 
 PIDTypeDef gSpeedPID;
 PIDTypeDef gSpeedPID2;
-PIDTypeDef gCurrentPID;
 
 void PIDInit(void)
 {

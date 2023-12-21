@@ -10,6 +10,7 @@
  */
 #include "shell_founction.h"
 #include "led.h"
+#include "string.h"
 #include "dcMotor.h"
 #include "PIDControl.h"
 
@@ -46,24 +47,25 @@ int32_t motorCommand(h_shell_t *h_shell, int argc, char **argv)
         printf("[INFO]: Stop the motor\r\n");
     }
     // detect the speed
-    else if (!strcmp(argv[1], "speed"))
+    else if (!strcmp(argv[1], "s"))
     {
         if (argc != 4)
         {
-            printf("[INFO]: Usage:m speed <speed>\r\n");
+            printf("[INFO]: Usage:m s <speed> <speed>\r\n");
             return -1;
         }
         setSpeed(argc, argv);
     }
-    // debug pid kp ki kd
+
     else if (!strcmp(argv[1], "debug"))
     {
-        setPIDparam(argc, argv);
+        setPIDparam(argc, argv); // debug pid kp ki kd
     }
     else
     {
         printf("[ERROR]: Command not found\r\n");
     }
+    return 0 ;
 }
 
 void registerShellCommands(h_shell_t *h_shell)
