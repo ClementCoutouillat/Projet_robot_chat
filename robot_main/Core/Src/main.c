@@ -32,6 +32,7 @@
 #include "board.h"
 #include "bumper.h"
 #include "dcMotor.h"
+#include "system.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -79,8 +80,9 @@ void start_task(void *pvParameters)
     // createBumperTask();
     // Create ydlidar task
     createYdlidarTask();
-    // Create balance task
-    // createBalanceTask();
+    // Create avoid task
+    createSystemTask();
+    // delete start task
     vTaskDelete(StartTask_Handler); // delete start task
     taskEXIT_CRITICAL();            // exit critical section
 }

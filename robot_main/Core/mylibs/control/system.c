@@ -110,10 +110,12 @@ void Avoid(void *parameter)
             }
             fsignal = 0;
             ffsignal = 0;
-            startScan();
+            // startScan();
+            printf("Avoid task is running\r\n");
         }
         else
         {
+            printf("Avoid task is not running\r\n");
             vTaskDelay(100);
         }
     }

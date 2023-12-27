@@ -7,29 +7,29 @@ void carInit(void)
 }
 void carLeft(void)
 {
-    printf("[info] car left\n");
+    printf("[info] car left\r\n");
 }
 void carRight(void)
 {
-    printf("[info] car right\n");
+    printf("[info] car right\r\n");
 }
 void carForward(void)
 {
-    printf("[info] car forward\n");
+    printf("[info] car forward\r\n");
 }
 void carBackward(void)
 {
-    printf("[info] car backward\n");
+    printf("[info] car backward\r\n");
 }
 void carStop(void)
 {
-    printf("[info] car stop\n");
+    printf("[info] car stop\r\n");
 }
 
 void driverMotor(uint16_t Vx, uint16_t Vz)
 {
     uint16_t amplitude = 300; // Wheel target speed limit
-    printf("[info] car move: left=%d, right=%d\n", Vx, Vz);
+    printf("[info] car move: left=%d, right=%d\r\n", Vx, Vz);
     uint16_t Vleft = Vx - Vz * Wheel_spacing / 2.0f;  //  calculate the target speed of the left wheel
     uint16_t Vright = Vx + Vz * Wheel_spacing / 2.0f; // calculate the target speed of the right wheel
     // TODO: add the motor PID speed target set function here

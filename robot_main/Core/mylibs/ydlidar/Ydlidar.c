@@ -374,11 +374,12 @@ void dataProcess(void)
                 PointDataProcessIndex = (PointDataProcessIndex + 1) % MaxScanPointCount;
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
-                    if (distances[j] > 0.0f && distances[j] < 1000.0f)
+                    if ((distances[j] > 0.0f && distances[j] < 500.0f) && (angles[j] > 0.0f && angles[j] < 30.0f))
                     {
                         printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
                     }
                 }
+                printf("--------------------\r\n");
 #ifdef YDLIDAR_DEBUG_LEVEL_2
                 for (int j = 0; j < data_packet->size_LSN; j++)
                 {
@@ -408,7 +409,7 @@ void dataProcess(void)
     printf("receiveCount = %ld\r\n", receiveCount);
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
     PointDataProcessIndex = 0;
-    stopScan();
+    // stopScan();
 }
 
 /**
@@ -475,6 +476,7 @@ void task_ydlidar(void *argument)
         vTaskDelayUntil(&lastWakeTime, F2T(RATE_10_HZ));
         dataProcess();
         xTaskNotifyGive(AvoidTask_Handler);
+        printf("task_ydlidar is running\r\n");
     }
 }
 
