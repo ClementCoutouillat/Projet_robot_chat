@@ -1,3 +1,13 @@
+/**
+ * @file drv_uart.h
+ * @author jiangbo WANG
+ * @brief
+ * @version 0.1
+ * @date 2023-12-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #ifndef __DRV_UART_H__
 #define __DRV_UART_H__
 #include <stdio.h>

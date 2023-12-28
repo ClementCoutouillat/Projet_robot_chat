@@ -77,7 +77,7 @@ void start_task(void *pvParameters)
     // Create board task
     // createBoardTask();
     // Create bumper task
-    // createBumperTask();
+    createBumperTask();
     // Create ydlidar task
     createYdlidarTask();
     // Create avoid task
@@ -127,31 +127,11 @@ int main(void)
     MX_TIM7_Init();
     MX_USART4_UART_Init();
     /* USER CODE BEGIN 2 */
-    // TODO: put the init function here
-
+    // encoder mode using PA8 for the input signal,and PA8 is also using for the syscfg register,so we need to disable the syscfg register[8]
     SYSCFG->CFGR1 |= (1 << 9);
-    PIDInit();
-    dcMotorInit();
-    YdlidarInit();
-    restartScan();
-    HAL_TIM_Base_Start_IT(&htim1);
-    HAL_TIM_Base_Start_IT(&htim3);
-    HAL_TIM_Base_Start_IT(&htim7);
-    HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-    HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
-
-    HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
-
     printf("\r\n\r\n>>>>>>>>>>>>>>Projet Robot Start<<<<<<<<<<<<<<\r\n");
-    // HAL_Delay(10000);
-    // moteur_controle(60, 50);
-    // while (1)
-    // {
-    //     /* code */
-    // }
+    // system init
+    systemInit();
 
     xTaskCreate((TaskFunction_t)start_task, // task function
                 (const char *)"start_task", // task name

@@ -1,3 +1,14 @@
+/**
+ * @file myuart.h
+ * @author Jiangbo WANG
+ * @brief This file is the uart driver for ydlidar
+ * @version 0.1
+ * @date 2023-12-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef __UART_H__
 #define __UART_H__
 

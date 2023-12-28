@@ -1,3 +1,14 @@
+/**
+ * @file Ydlidar.c
+ * 
+ * @author Jiangbo WANG
+ * @brief This file is the driver for YDLIDAR
+ * @version 0.1
+ * @date 2023-12-28
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include "Ydlidar.h"
 #include "main.h"
 #include "math.h"

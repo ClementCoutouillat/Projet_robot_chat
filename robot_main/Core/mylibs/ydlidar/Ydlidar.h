@@ -1,3 +1,12 @@
+/**
+ * @file Ydlidar.h
+ * @author jiangbo WANG
+ * @version 0.1
+ * @date 2023-12-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #ifndef __DYLIDER_H__
 #define __DYLIDER_H__
 #include <stdint.h>

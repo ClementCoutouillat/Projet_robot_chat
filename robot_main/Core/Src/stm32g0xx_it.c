@@ -32,10 +32,10 @@
 /* USER CODE BEGIN TD */
 bool BORDER_BACK_FLAG = false;
 bool BORDER_FRONT_FLAG = false;
-bool BUMPER1_FLAG = false;
-bool BUMPER2_FLAG = false;
-bool BUMPER3_FLAG = false;
-bool BUMPER4_FLAG = false;
+int16_t BUMPER1_FLAG = 0;
+int16_t BUMPER2_FLAG = 0;
+int16_t BUMPER3_FLAG = 0;
+int16_t BUMPER4_FLAG = 0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -183,7 +183,7 @@ void EXTI4_15_IRQHandler(void)
 
         char msg[] = "Contact Bumper 1 \n\r";
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
-        BUMPER1_FLAG = true;
+        BUMPER1_FLAG += 1;
 
         // TODO : SET/RESET Variable 'Chat'
         // TODO : Change Direction
@@ -195,7 +195,7 @@ void EXTI4_15_IRQHandler(void)
 
         char msg[] = "Contact Bumper 2 \n\r";
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
-        BUMPER2_FLAG = true;
+        BUMPER2_FLAG += 1;
 
         // TODO : SET/RESET Variable 'Chat'
         // TODO : Change Direction
@@ -206,7 +206,7 @@ void EXTI4_15_IRQHandler(void)
 
         char msg[] = "Contact Bumper 3 \n\r";
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
-        BUMPER3_FLAG = true;
+        BUMPER3_FLAG += 1;
 
         // TODO : SET/RESET Variable 'Chat'
         // TODO : Change Direction
@@ -217,7 +217,7 @@ void EXTI4_15_IRQHandler(void)
 
         char msg[] = "Contact Bumper 4 \n\r";
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
-        BUMPER4_FLAG = true;
+        BUMPER4_FLAG += 1;
 
         // TODO : SET/RESET Variable 'Chat'
         // TODO : Change Direction
