@@ -53,15 +53,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         receiveFlag = true;
         receiveCount++;
         SCAN_CIRCLE_INDEX = SCAN_CIRCLE_INDEX++ % MAX_SCAN_BUFFER_SIZE;
-        // if (SCAN_CIRCLE_INDEX == PROCESS_SCAN_DATA_INDEX)
-        // {
-        //     receiveFlag = false;
-        //     SCAN_CIRCLE_INDEX = (SCAN_CIRCLE_INDEX + MAX_SCAN_BUFFER_SIZE - 1) % MAX_SCAN_BUFFER_SIZE;
-        // }
-        // else
-        // {
-        //     receiveFlag = true;
-        // }
+        if (SCAN_CIRCLE_INDEX == PROCESS_SCAN_DATA_INDEX)
+        {
+            receiveFlag = false;
+            SCAN_CIRCLE_INDEX = (SCAN_CIRCLE_INDEX + MAX_SCAN_BUFFER_SIZE - 1) % MAX_SCAN_BUFFER_SIZE;
+        }
+        else
+        {
+            receiveFlag = true;
+        }
         startReceiveScanData();
     }
 }

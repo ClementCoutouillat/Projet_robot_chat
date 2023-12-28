@@ -10,7 +10,6 @@
  */
 void driverMotor(uint16_t Vx, uint16_t Vz)
 {
-    uint16_t amplitude = 300; // Wheel target speed limit
     printf("[info] car move: left=%d, right=%d\r\n", Vx, Vz);
     uint16_t Vleft = Vx - Vz * Wheel_spacing / 2.0f;  //  calculate the target speed of the left wheel
     uint16_t Vright = Vx + Vz * Wheel_spacing / 2.0f; // calculate the target speed of the right wheel

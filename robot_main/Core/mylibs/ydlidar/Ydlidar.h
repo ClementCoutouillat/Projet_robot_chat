@@ -43,9 +43,12 @@ typedef int8_t (*send_command_func)(uint8_t *cmd, uint32_t size);
 typedef int8_t (*receive_data_func)(uint8_t *data, uint32_t size);
 
 #define MAX_SCAN_POINTS 360
-#define MAX_SCAN_BUFFER_SIZE 1
-#define MaxScanPointCount 10
-
+#define FirstRobot 0
+#define SecondRobot 1
+#define MAX_SCAN_BUFFER_SIZE 2
+#define RobotNumber 2
+#define MaxObstaclePoint 40
+#define MaxObstacleArea 18
 // #define YDLIDAR_DEBUG
 // send and receive function struct
 typedef struct
@@ -117,7 +120,7 @@ typedef struct
 // scanpoint with count
 typedef struct
 {
-    ScanPoint_t scanPoint[40];
+    ScanPoint_t scanPoint[MaxObstaclePoint];
     uint16_t count;
 } ScanPointData_t;
 
@@ -146,6 +149,8 @@ result_t startScan(void);
 void startReceiveScanData(void);
 ///< data process
 void dataProcess(void);
+///< get scan angle
+bool getAngleAndDistanceAfterProcess(double *angles, double *distances, int LSN);
 ///< restart scan
 void restartScan(void);
 ///< stop scan

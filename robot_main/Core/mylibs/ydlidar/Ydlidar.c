@@ -1,13 +1,13 @@
 /**
  * @file Ydlidar.c
- * 
+ *
  * @author Jiangbo WANG
  * @brief This file is the driver for YDLIDAR
  * @version 0.1
  * @date 2023-12-28
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #include "Ydlidar.h"
 #include "main.h"
@@ -16,8 +16,9 @@
 #include "myuart.h"
 
 ydlidar_t ydlidar;
-ScanPointData_t PointDataProcess[MaxScanPointCount] = {0};
-uint8_t PointDataProcessIndex = 0;
+ScanPoint_t obstacleAngleAndDistances[RobotNumber] = {0};
+uint8_t obstacleAngleAndDistancesIndex = 0;
+static bool isFirstRobot = true;
 extern UART_HandleTypeDef huart4;
 
 // #define YDLIDAR_DEBUG // TODO:comment this line to disable debug mode
@@ -308,6 +309,7 @@ ydlidar_data_packet_t *data_packet;
 
 void dataProcess(void)
 {
+    bool getTwoRobotObstacle = false;
     if (receiveFlag == false)
     {
         printf("[DEBUG] receiveFlag = false, waiting for receive data\r\n");
@@ -364,49 +366,27 @@ void dataProcess(void)
             printf("[DEBUG] checkSumrResult = %4x\r\n", checkSumrResult);
             printf("[DEBUG] data_packet->crc_CS = %4x\r\n", data_packet->crc_CS);
 #endif
-
             if (checkSumrResult == data_packet->crc_CS)
             {
                 double distances[data_packet->size_LSN];
                 double angles[data_packet->size_LSN];
-                parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);                                                       // parse the distance
-                AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles); // parse the first level angle
-                AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);                                   // parse the second level angle
-                uint8_t distancesIndex = 0;
-                for (int j = 0; j < data_packet->size_LSN; j++)
+                // parse the distance
+                parseDistance(sampleDatas_SI, data_packet->size_LSN, distances);
+                // parse the first level angle
+                AngleFirstLevelParse(data_packet->startAngle_FSA, data_packet->endAngle_LSA, data_packet->size_LSN, (double *)angles);
+                // parse the second level angle
+                AngleSecondLevelParse((double *)angles, data_packet->size_LSN, (double *)distances);
+                // get the obstacle angle after process
+                getTwoRobotObstacle = getAngleAndDistanceAfterProcess((double *)angles, (double *)distances, data_packet->size_LSN);
+                if (getTwoRobotObstacle)
                 {
-                    if (distances[j] != 0.0f)
-                    {
-                        PointDataProcess[PointDataProcessIndex].scanPoint[distancesIndex].angle = angles[j];
-                        PointDataProcess[PointDataProcessIndex].scanPoint[distancesIndex].distance = distances[j];
-                        PointDataProcess[PointDataProcessIndex].count = distancesIndex + 1;
-                    }
+                    break;
                 }
-                PointDataProcessIndex = (PointDataProcessIndex + 1) % MaxScanPointCount;
-                for (int j = 0; j < data_packet->size_LSN; j++)
-                {
-                    if ((distances[j] > 0.0f && distances[j] < 500.0f) && (angles[j] > 0.0f && angles[j] < 30.0f))
-                    {
-                        printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
-                    }
-                }
-                printf("--------------------\r\n");
-#ifdef YDLIDAR_DEBUG_LEVEL_2
-                for (int j = 0; j < data_packet->size_LSN; j++)
-                {
-                    if (distances[j] > 0.0f && distances[j] < 500.0f)
-                    {
-                        printf("[DEBUG] angles[%02d] : %011.2f => distances[%02d] : %011.2f mm\r\n", j, angles[j], j, distances[j]);
-                    }
-                }
-#endif
             }
-#ifdef YDLIDAR_DEBUG_LEVEL_2
             else
             {
                 printf("[ERROR] Checksum error!\r\n");
             }
-#endif
             dataIndex += data_packet->size_LSN * sizeof(uint16_t) + sizeof(ydlidar_data_packet_t);
         }
         else
@@ -415,12 +395,81 @@ void dataProcess(void)
         }
     }
     receiveFlag = false;
-    // clear the buffer
     memset(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX], 0, sizeof(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX]));
-    printf("receiveCount = %ld\r\n", receiveCount);
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
-    PointDataProcessIndex = 0;
     // stopScan();
+}
+
+/**
+ * @brief  This function is used to get the obstacle angle after process,
+ *         the obstacle angle is the angle of the obstacle which is the nearest to the robot,
+ *         the obstacle angle is in the range of [0, 360]
+ *         for chat: this angle is used to hit the souris
+ *         for souris: this angle is used to avoid the obstacle[the chat]
+ *
+ */
+
+bool getAngleAndDistanceAfterProcess(double *angles, double *distances, int LSN)
+{
+    double obstacleStartAngle = 0.0;
+    double obstacleEndAngle = 0.0;
+    double obstacleDistance = 0.0;
+    uint8_t usefullDistanceCount = 0;
+    for (uint8_t i = 0; i < LSN; i++)
+    {
+        if (distances[i] > 1000)
+        {
+            continue;
+        }
+        else
+        {
+            usefullDistanceCount++;
+        }
+    }
+    if (usefullDistanceCount <= 2)
+    {
+        return false;
+    }
+    else
+    {
+        for (uint8_t i = 0; i < LSN; i++)
+        {
+            if (distances[i] == 0)
+            {
+                continue;
+            }
+            else
+            {
+                obstacleStartAngle = angles[i];
+                for (uint8_t j = i + 1; j < LSN; j++)
+                {
+                    if (distances[j] == 0)
+                    {
+                        obstacleDistance = distances[(i + j) / 2];
+                        break;
+                    }
+                    else
+                    {
+                        obstacleEndAngle = angles[j];
+                    }
+                }
+                break;
+            }
+        }
+        if (isFirstRobot == true)
+        {
+            isFirstRobot = false;
+            obstacleAngleAndDistances[FirstRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
+            obstacleAngleAndDistances[FirstRobot].distance = obstacleDistance;
+            return false;
+        }
+        else
+        {
+            obstacleAngleAndDistances[SecondRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
+            obstacleAngleAndDistances[SecondRobot].distance = obstacleDistance;
+            return true;
+        }
+    }
 }
 
 /**
@@ -486,7 +535,7 @@ void task_ydlidar(void *argument)
     {
         vTaskDelayUntil(&lastWakeTime, F2T(RATE_10_HZ));
         dataProcess();
-        xTaskNotifyGive(AvoidTask_Handler);
+        // xTaskNotifyGive(AvoidTask_Handler);
         printf("task_ydlidar is running\r\n");
     }
 }

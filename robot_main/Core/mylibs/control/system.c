@@ -18,7 +18,7 @@
 #include "tim.h"
 #include "motorInterface.h"
 
-extern ScanPointData_t PointDataProcess[MaxScanPointCount];
+extern ScanPoint_t obstacleAngleAndDistances[RobotNumber];
 extern uint8_t PointDataProcessIndex;
 TaskHandle_t AvoidTask_Handler;
 static void timerInit(void);
@@ -90,8 +90,8 @@ static void chat(void)
         else
         {
             printf("Chat task is not running\r\n");
-            vTaskDelay(100);
         }
+        vTaskDelay(100);
     }
 }
 
@@ -101,13 +101,13 @@ static void souris(void)
     {
         if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
         {
-            printf("Souris task is running\r\n");
+            
         }
         else
         {
             printf("Souris task is not running\r\n");
-            vTaskDelay(100);
         }
+        vTaskDelay(100);
     }
 }
 
@@ -132,8 +132,8 @@ static void timerInit(void)
 void softReset(void)
 {
     // close all interrupt
-    // __set_PRIMASK(1);
-    __set_FAULTMASK(1);
+    __set_PRIMASK(1);
+    // __set_FAULTMASK(1);
     // reset the system
     NVIC_SystemReset();
 }

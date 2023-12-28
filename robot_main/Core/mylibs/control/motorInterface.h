@@ -13,11 +13,6 @@
 #include "stdio.h"
 #include "dcMotor.h"
 
-void carInit(void);
-void carLeft(void);
-void carRight(void);
-void carForward(void);
-void carBackward(void);
 void carStop(void);
 void driverMotor(uint16_t Vx, uint16_t Vz);
 void changeAngle(float angle);
