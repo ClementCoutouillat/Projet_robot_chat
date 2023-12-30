@@ -25,6 +25,7 @@ static void timerInit(void);
 static void chat(void);
 static void souris(void);
 static bool isChat(void);
+static void resetRobotAngle(void);
 
 // static void souris(void);
 static uint32_t sysTickCnt = 0;
@@ -80,35 +81,105 @@ static bool isChat(void)
 
 static void chat(void)
 {
+    double nearestSourisAngle = 0.0;
+    double nearestSourisDistance = 0.0;
     while (1)
     {
         /* receive notification */
         if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
         {
-            printf("Chat task is running\r\n");
+            if (obstacleAngleAndDistances[FirstRobot].distance < obstacleAngleAndDistances[SecondRobot].distance)
+            {
+                nearestSourisAngle = obstacleAngleAndDistances[FirstRobot].angle;
+                nearestSourisDistance = obstacleAngleAndDistances[FirstRobot].distance;
+            }
+            else
+            {
+                nearestSourisAngle = obstacleAngleAndDistances[SecondRobot].angle;
+                nearestSourisDistance = obstacleAngleAndDistances[SecondRobot].distance;
+            }
+
+            if (nearestSourisAngle > 0 && nearestSourisAngle < 180)
+            {
+                changeAngle(nearestSourisAngle);
+                goStraight(300, 300);
+            }
+            else if (nearestSourisAngle > 180 && nearestSourisAngle < 360)
+            {
+                changeAngle(360 - nearestSourisAngle);
+                goStraight(300, 300);
+            }
+            else
+            {
+                printf("Chat task is not running\r\n");
+            }
+            vTaskDelay(100);
         }
-        else
-        {
-            printf("Chat task is not running\r\n");
-        }
-        vTaskDelay(100);
     }
 }
 
+#define MaxChatKeepAngleCount 3
 static void souris(void)
 {
+    double obstacleAngle = 0.0;
+    double obstacleDistance = 0.0;
+    uint8_t ChatRobot = 0;
+    double chatAngle[RobotNumber][MaxChatKeepAngleCount];
+    double chatDistance[RobotNumber][MaxChatKeepAngleCount];
+    uint8_t chatAngleCount = 0;
     while (1)
     {
         if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
         {
-            
+            if (chatAngleCount < MaxChatKeepAngleCount)
+            {
+                chatAngle[FirstRobot][chatAngleCount] = obstacleAngleAndDistances[FirstRobot].angle;
+                chatAngle[SecondRobot][chatAngleCount] = obstacleAngleAndDistances[SecondRobot].angle;
+                chatDistance[FirstRobot][chatAngleCount] = obstacleAngleAndDistances[FirstRobot].distance;
+                chatDistance[SecondRobot][chatAngleCount] = obstacleAngleAndDistances[SecondRobot].distance;
+                chatAngleCount++;
+            }
+            else
+            {
+                chatAngleCount = 0;
+                if ((chatAngle[FirstRobot][0] - chatAngle[FirstRobot][MaxChatKeepAngleCount - 1]) > -3.0 && (chatAngle[FirstRobot][0] - chatAngle[FirstRobot][MaxChatKeepAngleCount - 1]) < 3.0 && (chatDistance[FirstRobot][1] - chatDistance[FirstRobot][0]) < 0)
+                {
+                    ChatRobot = FirstRobot;
+                }
+                else if ((chatAngle[SecondRobot][0] - chatAngle[SecondRobot][MaxChatKeepAngleCount - 1]) > -3.0 && (chatAngle[SecondRobot][0] - chatAngle[SecondRobot][MaxChatKeepAngleCount - 1]) < 3.0 && (chatDistance[SecondRobot][1] - chatDistance[SecondRobot][0]) < 0)
+                {
+                    ChatRobot = SecondRobot;
+                }
+                else
+                {
+                    if (chatDistance[FirstRobot][MaxChatKeepAngleCount - 1] < chatDistance[SecondRobot][MaxChatKeepAngleCount - 1])
+                    {
+                        ChatRobot = FirstRobot;
+                    }
+                    else
+                    {
+                        ChatRobot = SecondRobot;
+                    }
+                }
+                obstacleAngle = obstacleAngleAndDistances[ChatRobot].angle;
+                obstacleDistance = obstacleAngleAndDistances[ChatRobot].distance;
+                if (obstacleAngle > 0 && obstacleAngle < 180)
+                {
+                    changeAngle(-90);
+                    goStraight(200, 200);
+                }
+                else if (obstacleAngle > 180 && obstacleAngle < 360)
+                {
+                    changeAngle(90);
+                    goStraight(200, 200);
+                }
+            }
         }
-        else
-        {
-            printf("Souris task is not running\r\n");
-        }
-        vTaskDelay(100);
     }
+}
+
+static void resetRobotAngle(void)
+{
 }
 
 static void timerInit(void)

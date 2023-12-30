@@ -7,7 +7,7 @@ void boardTask(void *pvParameters)
         printf("[INFO] board task\r\n");
         // TODO: add board task, when the boarder is detected, the car will stop and turn around
         // TODO: this task has the highest priority
-        vTaskDelay(10000);
+        vTaskDelay(100);
     }
 }
 
