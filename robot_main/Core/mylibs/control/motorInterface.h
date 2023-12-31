@@ -13,8 +13,9 @@
 #include "stdio.h"
 #include "dcMotor.h"
 
-void carStop(void);
+void motorStop(void);
 void driverMotor(uint16_t Vx, uint16_t Vz);
 void changeAngle(float angle);
-void goStraight(float m_gauche, float m_droite);
+void goStraight(float speed);
+void moveDistance(float distance, float speed);
 #endif // __MOTOR_INTERFACE_H__

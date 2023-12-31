@@ -8,6 +8,8 @@
 #include "dcMotor.h"
 #include "setSpeed.h"
 #include "tim.h"
+#include "FreeRTOS.h"
+#include "task.h"
 EncoderTypeDef gencodeSpeed;
 EncoderTypeDef gencodeSpeed2;
 MotorTypeDef gMotorData;
@@ -184,75 +186,70 @@ void moteur_controle(float m_gauche, float m_droite)
     gMotorData.state = MOTOR_STATE_START;
 }
 
-// pc6 pc7 timer3  motor 1
-// timer1 motor2
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void moteur_controle_dPWM(float m_gauche, float m_droite)
 {
-    if (htim->Instance == TIM3) // encooder compter  motor 1
-    {
-        //   Determine the current counter counting direction
-        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
-        //     underflow, count down
-        {
-            Encoder_Overflow_Count--;
-        }
-        else
-        {
-            //   overflow, count up
-            Encoder_Overflow_Count++;
-        }
-    }
-    else if (htim->Instance == TIM1) // encooder compter  motor 1
-    {
-        /* Determine the current counter counting direction */
-        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
-        /* underflow, count down */
-        {
-            Encoder_Overflow_Count2--;
-            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13); // vert
-        }
-        else
-        {
-            /* overflow, count up */
-            Encoder_Overflow_Count2++;
-            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12); // orange
-        }
-    }
-    else if (htim->Instance == TIM7) // every 100ms call the interruption for calculte PID
-    {
-        int32_t encoderValueNow = getEncoderValue();
-        int32_t encoderValueNow2 = getEncoderValue2();
-        // printf("eNow: %d\r\n", encoderValueNow);
-        // printf("eNow2: %d\r\n", encoderValueNow2);
-        speedCompute(encoderValueNow, 1);
-        speedCompute2(encoderValueNow2, 1);
-        // printf("speed: %f\r\n", gMotorData.speed);
-        // printf("speed1: %f\r\n", gMotorData2.speed);
-        if (gMotorData.state == MOTOR_STATE_START) // MOTOR_STATE_START call in setSpeed
-        {
-            gMotorData.motorPWM = incrementPIDControl(&gSpeedPID, gMotorData.speed); // gMotorData.speed is set in speedCompute
-            if (gMotorData.motorPWM >= 2560)                                         /* ÏÞËÙ */
-            {
-                gMotorData.motorPWM = 2560;
-            }
-            else if (gMotorData.motorPWM <= -2560)
-            {
-                gMotorData.motorPWM = -2560;
-            }
-            //    printf("gMotorData.speed limite is： %f\r\n ",gMotorData.motorPWM);
+    float gauchePWM, droitePWM;
+    gauchePWM = 2560 / 300 * m_gauche;
+    droitePWM = 2560 / 300 * m_droite;
+    motor_pwm_set(gauchePWM);
+    motor_pwm_set2(droitePWM);
+}
 
-            gMotorData2.motorPWM = incrementPIDControl2(&gSpeedPID2, gMotorData2.speed); // gMotorData.speed is set in speedCompute
-
-            if (gMotorData2.motorPWM >= 2560) /* ÏÞËÙ */
-            {
-                gMotorData2.motorPWM = 2560;
-            }
-            else if (gMotorData2.motorPWM <= -2560)
-            {
-                gMotorData2.motorPWM = -2560;
-            }
-            motor_pwm_set(gMotorData.motorPWM);
-            motor_pwm_set2(gMotorData2.motorPWM);
+void dcMotor()
+{
+    int32_t encoderValueNow = getEncoderValue();
+    int32_t encoderValueNow2 = getEncoderValue2();
+    // printf("eNow: %d\r\n", encoderValueNow);
+    // printf("eNow2: %d\r\n", encoderValueNow2);
+    speedCompute(encoderValueNow, 1);
+    speedCompute2(encoderValueNow2, 1);
+    // printf("speed: %f\r\n", gMotorData.speed);
+    // printf("speed1: %f\r\n", gMotorData2.speed);
+    if (gMotorData.state == MOTOR_STATE_START) // MOTOR_STATE_START call in setSpeed
+    {
+        gMotorData.motorPWM = incrementPIDControl(&gSpeedPID, gMotorData.speed); // gMotorData.speed is set in speedCompute
+        if (gMotorData.motorPWM >= 2560)                                         /* ÏÞËÙ */
+        {
+            gMotorData.motorPWM = 2560;
         }
+        else if (gMotorData.motorPWM <= -2560)
+        {
+            gMotorData.motorPWM = -2560;
+        }
+        //    printf("gMotorData.speed limite is： %f\r\n ",gMotorData.motorPWM);
+
+        gMotorData2.motorPWM = incrementPIDControl2(&gSpeedPID2, gMotorData2.speed); // gMotorData.speed is set in speedCompute
+
+        if (gMotorData2.motorPWM >= 2560) /* ÏÞËÙ */
+        {
+            gMotorData2.motorPWM = 2560;
+        }
+        else if (gMotorData2.motorPWM <= -2560)
+        {
+            gMotorData2.motorPWM = -2560;
+        }
+        motor_pwm_set(gMotorData.motorPWM);
+        motor_pwm_set2(gMotorData2.motorPWM);
     }
+    vTaskDelay(100);
+}
+
+void dcMotorTask(void *pvParameters)
+{
+    TickType_t xLastWakeTime;
+    xLastWakeTime = xTaskGetTickCount();
+    while (1)
+    {
+        dcMotor();
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
+    }
+}
+
+/**
+ * @brief create the dcMotor task
+ *
+ */
+void createDcMotorTask(void)
+{
+    xTaskCreate(dcMotor, "dcMotor", 128, NULL, 1, NULL);
 }

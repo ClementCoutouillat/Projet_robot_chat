@@ -1,6 +1,8 @@
 #include "motorInterface.h"
-#define Wheel_spacing 0.3f  // The distance between the two wheels of the car
-#define Wheel_diameter 0.1f // The diameter of the wheel of the car
+#include "math.h"
+#include "getEncoder.h"
+#define Wheel_spacing 0.18f  // The distance between the two wheels of the car
+#define Wheel_diameter 0.04f // The diameter of the wheel of the car
 
 /**
  * @brief Thi founction is used to control the car to move
@@ -36,9 +38,21 @@ static float getdeltaM(float angle)
  * @param m_gauche
  * @param m_droite
  */
-void goStraight(float m_gauche, float m_droite) // distance in meter
+void goStraight(float speed) // distance in meter
 {
-    moteur_controle(m_gauche, m_droite);
+    moteur_controle(speed, speed);
+}
+
+void speedLimit(float *speed)
+{
+    if (*speed > MAX_SPEED)
+    {
+        *speed = MAX_SPEED;
+    }
+    else if (*speed < -MAX_SPEED)
+    {
+        *speed = -MAX_SPEED;
+    }
 }
 
 /**
@@ -48,8 +62,52 @@ void goStraight(float m_gauche, float m_droite) // distance in meter
  */
 void changeAngle(float angle) // angle in degree
 {
-    float m_gauche, m_droite;
-    m_gauche = gMotorData.speed + getdeltaM(angle);
-    m_droite = gMotorData2.speed + getdeltaM(angle);
-    moteur_controle(m_gauche, m_droite);
+    uint16_t m_gauche, m_droite, omega, delay;
+    // version 1
+    //  m_gauche = gMotorData.speed + getdeltaM(angle);
+    //  m_droite = gMotorData2.speed + getdeltaM(angle);
+    //  moteur_controle(m_gauche, m_droite);
+    // version 2
+    if (angle > 0 && angle <= 180)
+    {
+        m_gauche = MAX_SPEED;
+        m_droite = -MAX_SPEED;
+    }
+    else if (angle > 180 && angle < 360)
+    {
+        m_gauche = -MAX_SPEED;
+        m_droite = MAX_SPEED;
+    }
+    // motor control with pwm directly
+    moteur_controle_dPWM(m_gauche, m_droite);
+    // angle speed
+    omega = Wheel_diameter * 3.1415926 / 60 / Wheel_spacing * abs(m_gauche - m_droite);
+    // delay
+    delay = (uint16_t)(1000 * round(angle / omega));
+    HAL_Delay(delay);
+    // stop
+    moteur_controle_dPWM(0, 0);
+}
+
+/**
+ * @brief stop the car
+ *
+ *
+ */
+void motorStop(void)
+{
+    motor_contorle_dPWM(0, 0);
+}
+
+/**
+ * @brief This founction is used to control the car to move, the distance is in meter
+ *
+ */
+void moveDistance(float distance, float speed)
+{
+    float runcircle = (distance / (Wheel_diameter * 3.1415926));
+    uint16_t delay = (uint16_t)(1000 * (runcircle / speed));
+    goStraight(speed);
+    HAL_Delay(delay);
+    goStraight(0);
 }

@@ -17,6 +17,7 @@
     "main.h": "c",
     "tim.h": "c",
     "dma.h": "c",
-    "shell_founction.h": "c"
+    "shell_founction.h": "c",
+    "system.h": "c"
   }
 }

@@ -25,7 +25,6 @@ static void timerInit(void);
 static void chat(void);
 static void souris(void);
 static bool isChat(void);
-static void resetRobotAngle(void);
 
 // static void souris(void);
 static uint32_t sysTickCnt = 0;
@@ -102,12 +101,12 @@ static void chat(void)
             if (nearestSourisAngle > 0 && nearestSourisAngle < 180)
             {
                 changeAngle(nearestSourisAngle);
-                goStraight(300, 300);
+                goStraight(300);
             }
             else if (nearestSourisAngle > 180 && nearestSourisAngle < 360)
             {
                 changeAngle(360 - nearestSourisAngle);
-                goStraight(300, 300);
+                goStraight(300);
             }
             else
             {
@@ -165,28 +164,23 @@ static void souris(void)
                 obstacleDistance = obstacleAngleAndDistances[ChatRobot].distance;
                 if (obstacleAngle > 0 && obstacleAngle < 180)
                 {
-                    changeAngle(-90);
-                    goStraight(200, 200);
+                    changeAngle(270);
+                    goStraight(200);
                 }
                 else if (obstacleAngle > 180 && obstacleAngle < 360)
                 {
                     changeAngle(90);
-                    goStraight(200, 200);
+                    goStraight(200);
                 }
             }
         }
     }
 }
 
-static void resetRobotAngle(void)
-{
-}
-
 static void timerInit(void)
 {
     HAL_TIM_Base_Start_IT(&htim1);
     HAL_TIM_Base_Start_IT(&htim3);
-    HAL_TIM_Base_Start_IT(&htim7);
     HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
 
@@ -209,6 +203,10 @@ void softReset(void)
     NVIC_SystemReset();
 }
 
+/**
+ * @brief create the system task
+ *
+ */
 void createSystemTask(void)
 {
     // Task Handle

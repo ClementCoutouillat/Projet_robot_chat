@@ -76,4 +76,5 @@ void speedCompute2(int encode_now, uint8_t computePerms);
 void speedCompute(int encode_now, uint8_t computePerms);
 
 void tourne_modeur(float angle);
+void moteur_controle_dPWM(float m_gauche, float m_droite);
 #endif /* DCMOTOR_H_ */
