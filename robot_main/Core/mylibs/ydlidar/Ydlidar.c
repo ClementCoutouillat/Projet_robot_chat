@@ -18,6 +18,8 @@
 ydlidar_t ydlidar;
 ScanPoint_t obstacleAngleAndDistances[RobotNumber] = {0};
 uint8_t obstacleAngleAndDistancesIndex = 0;
+SemaphoreHandle_t semYdlidarUartrRead;
+ydlidar_data_process_status_t dataProcessStatus = WAITING_DATA;
 static bool isFirstRobot = true;
 extern UART_HandleTypeDef huart4;
 
@@ -26,6 +28,7 @@ extern UART_HandleTypeDef huart4;
 
 void YdlidarInit(void)
 {
+    // init the ydlidar function
     ydlidar.func.send_command = uartSendCommand;
     ydlidar.func.receive_response = uartReceiveResponse;
     ydlidar.func.receive_data_dma = uartReceiveDataDMA;
@@ -269,8 +272,8 @@ void AngleFirstLevelParse(uint16_t FSA, uint16_t LSA, int LSN, double *angles)
  */
 void AngleSecondLevelParse(double *angles, int LSN, double *distances)
 {
-    // IF Distance𝑖 == 0 AngCorrect𝑖 = 0
-    // ELSE AngCorrect𝑖 = tand−1(21.8 ∗ 155.3−Distance𝑖 155.3∗Distance𝑖) for (int i = 1; i < LSN; i++)
+    // IF Distance == 0 AngCorrect = 0
+    // ELSE AngCorrect = tand−1(21.8 ∗ 155.3−Distance 155.3∗Distance) for (int i = 1; i < LSN; i++)
     double AngCorrect = 0.0;
     for (int i = 1; i < LSN; i++)
     {
@@ -289,7 +292,6 @@ void AngleSecondLevelParse(double *angles, int LSN, double *distances)
 uint8_t ydlidarUartRawData[MAX_SCAN_BUFFER_SIZE][MAX_SCAN_POINTS];
 uint8_t SCAN_CIRCLE_INDEX = 0;
 uint8_t PROCESS_SCAN_DATA_INDEX = 0;
-
 /**
  * @brief  This function is used to start receive the scan data
  *
@@ -303,32 +305,35 @@ void startReceiveScanData(void)
  * @brief  This function is used to process the scan data
  *
  */
-bool receiveFlag = false;
-uint32_t receiveCount = 0;
-ydlidar_data_packet_t *data_packet;
 
+ydlidar_data_packet_t *data_packet;
+bool receiveFlag = false;
 void dataProcess(void)
 {
+    xSemaphoreTake(semYdlidarUartrRead, portMAX_DELAY);
+    printf("receiveFlag = %d\r\n", receiveFlag);
     bool getTwoRobotObstacle = false;
-    if (receiveFlag == false)
-    {
-        printf("[DEBUG] receiveFlag = false, waiting for receive data\r\n");
-        return;
-    }
-    // printf("[DEBUG] PROCESS_SCAN_DATA_INDEX = %d, SCAN_CIRCLE_INDEX = %d\r\n", PROCESS_SCAN_DATA_INDEX, SCAN_CIRCLE_INDEX);
-
     uint8_t *data = (uint8_t *)&ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX];
-#ifdef YDLIDAR_DEBUG_LEVEL_2
+    // #ifdef YDLIDAR_DEBUG_LEVEL_2
     for (int i = 0; i < MAX_SCAN_POINTS; i++)
     {
         printf("%02x ", data[i]);
+        if (i % 10 == 0)
+        {
+            printf("| ");
+        }
+        if (i % 40 == 0)
+        {
+            printf("\r\n");
+        }
     }
     printf("\r\n");
-#endif
-    uint16_t checkSumrResult = 0;
+    // #endif
+    uint16_t checkSumResult = 0;
     uint16_t dataIndex = 0;
     while (dataIndex < MAX_SCAN_POINTS)
     {
+        printf("dataIndex = %d\r\n", dataIndex);
         if (data[dataIndex] == 0xAA && data[dataIndex + 1] == 0x55) // check the start flag
         {
             data_packet = (ydlidar_data_packet_t *)&data[dataIndex];
@@ -353,7 +358,7 @@ void dataProcess(void)
             {
                 break;
             }
-            checkSumrResult = calculateChecksum((uint8_t *)&data[dataIndex], data_packet->size_LSN + 4); // calculate the checksum
+            checkSumResult = calculateChecksum((uint8_t *)&data[dataIndex], data_packet->size_LSN + 4); // calculate the checksum
             uint16_t sampleDatas_SI[data_packet->size_LSN];
             uint16_t *sampledata = (uint16_t *)&data[dataIndex + sizeof(ydlidar_data_packet_t)];
 
@@ -361,12 +366,12 @@ void dataProcess(void)
             {
                 sampleDatas_SI[j] = sampledata[j];
             }
-#ifdef YDLIDAR_DEBUG_LEVEL_2
+            // #ifdef YDLIDAR_DEBUG_LEVEL_2
             printf("[DEBUG] dataIndex = %d\r\n", dataIndex);
-            printf("[DEBUG] checkSumrResult = %4x\r\n", checkSumrResult);
+            printf("[DEBUG] checkSumResult = %4x\r\n", checkSumResult);
             printf("[DEBUG] data_packet->crc_CS = %4x\r\n", data_packet->crc_CS);
-#endif
-            if (checkSumrResult == data_packet->crc_CS)
+            // #endif
+            if (checkSumResult == data_packet->crc_CS)
             {
                 double distances[data_packet->size_LSN];
                 double angles[data_packet->size_LSN];
@@ -385,7 +390,7 @@ void dataProcess(void)
             }
             else
             {
-                printf("[ERROR] Checksum error!\r\n");
+                printf("[ERROR] Checksum error!,with dataindex = %d,checkSumResult = %4x, data_packet->crc_CS = %4x\r\n", dataIndex, checkSumResult, data_packet->crc_CS);
             }
             dataIndex += data_packet->size_LSN * sizeof(uint16_t) + sizeof(ydlidar_data_packet_t);
         }
@@ -495,6 +500,7 @@ void restartScan(void)
     {
         // reset the microcontroller
         printf("YDLIDAR get DeviceInfo Error!!!\r\n");
+        softReset();
         HAL_Delay(1000);
     }
     printf("[YDLIDAR INFO] Connection established in [%s]\r\n", deviceinfo.model == YDLIDAR_MODEL_X4 ? "X4" : "NOT MODEL X4");
@@ -529,20 +535,29 @@ void restartScan(void)
 // task to run the ydlidar
 void task_ydlidar(void *argument)
 {
-    uint32_t lastWakeTime = getSysTickCnt();
+    TickType_t lastWakeTime = getSysTickCnt();
 
     while (1)
     {
-        vTaskDelayUntil(&lastWakeTime, F2T(RATE_10_HZ));
+        vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));
         dataProcess();
         // xTaskNotifyGive(AvoidTask_Handler);
-        printf("task_ydlidar is running\r\n");
+        // printf("task_ydlidar is running\r\n");
     }
 }
 
 // create the task to start the scan
 void createYdlidarTask(void)
 {
+    semYdlidarUartrRead = xSemaphoreCreateBinary();
+    if (semYdlidarUartrRead == NULL)
+    {
+        printf("[ERROR]: Semaphore create failed.\r\n"); // TODO: handle error
+    }
+    else
+    {
+        printf("[INFO]: Ydlidar uart semaphore create success.\r\n");
+    }
     printf("[INFO]: Create YDLIDAR task.\r\n");
     xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 3, NULL);
 }

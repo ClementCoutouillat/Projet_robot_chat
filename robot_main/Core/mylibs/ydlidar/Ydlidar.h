@@ -133,6 +133,14 @@ typedef struct
     ydlidar_scan_point_t scan_point;       /**< The scan point */
 } __attribute__((packed)) ydlidar_t;
 
+
+//ydlidar data process status enum : 0 for waitingdata , 1 for processing data
+typedef enum
+{
+    WAITING_DATA = 0,
+    PROCESSING_DATA = 1
+} ydlidar_data_process_status_t;
+
 typedef uint8_t result_t;
 #define RESULT_OK 0
 #define RESULT_FAIL -1

@@ -231,7 +231,7 @@ void dcMotor()
         motor_pwm_set(gMotorData.motorPWM);
         motor_pwm_set2(gMotorData2.motorPWM);
     }
-    vTaskDelay(100);
+    // vTaskDelay(100);
 }
 
 void dcMotorTask(void *pvParameters)
@@ -242,6 +242,7 @@ void dcMotorTask(void *pvParameters)
     {
         dcMotor();
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
+        printf("motor task is running\r\n");
     }
 }
 
@@ -251,5 +252,5 @@ void dcMotorTask(void *pvParameters)
  */
 void createDcMotorTask(void)
 {
-    xTaskCreate(dcMotor, "dcMotor", 128, NULL, 1, NULL);
+    xTaskCreate(dcMotorTask, "dcMotor", 128, NULL, 1, NULL);
 }

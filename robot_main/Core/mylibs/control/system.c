@@ -42,12 +42,16 @@ void systemInit(void)
     PIDInit();
     // Init the motor parameter
     dcMotorInit();
+
     // Init the ydlidar parameter
     YdlidarInit();
+
     // Init the timer
     timerInit();
+
     // restart the scan
     restartScan();
+    printf("[INFO]: System init success\r\n");
 }
 
 void systemControl(void *argument)
