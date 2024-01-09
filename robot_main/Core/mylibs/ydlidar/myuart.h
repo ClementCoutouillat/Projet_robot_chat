@@ -52,7 +52,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if (huart->Instance == USART4)
     {
         xSemaphoreGiveFromISR(semYdlidarUartrRead, NULL);
-        startReceiveScanData();
+        YdlidarReceivedScanDataWithDMA();
     }
 }
 
