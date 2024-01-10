@@ -96,4 +96,5 @@ void task_shell(void *argument)
 void createShellTask(void)
 {
     xTaskCreate(task_shell, "shell", 512, NULL, 1, NULL);
+    printf("[INFO]: Shell task create success.\r\n");
 }

@@ -1,3 +1,14 @@
+/**
+ * @file Ydlidar.h
+ * @author JiangboWANG
+ * @brief This file is the driver for YDLIDAR
+ * @version 0.1
+ * @date 2024-01-09
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 #ifndef __YDLIDAR_H__
 #define __YDLIDAR_H__
 

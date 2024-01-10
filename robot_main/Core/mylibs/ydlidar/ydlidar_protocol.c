@@ -187,7 +187,7 @@ uint16_t calculateChecksum(uint8_t *data, uint32_t length)
  */
 void startReceiveScanData(uint8_t *addr, uint32_t size)
 {
-    ydlidar.func.receive_response(addr, size);
+    ydlidar.func.receive_data_dma(addr, size);
     // ydlidar.func.receive_data_dma(ydlidarUartRawData[SCAN_CIRCLE_INDEX], sizeof(ydlidarUartRawData[SCAN_CIRCLE_INDEX]));
 }
 

@@ -247,13 +247,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         /* underflow, count down */
         {
             Encoder_Overflow_Count2--;
-            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13); // vert
         }
         else
         {
             /* overflow, count up */
             Encoder_Overflow_Count2++;
-            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12); // orange
         }
     }
     /* USER CODE END Callback 1 */

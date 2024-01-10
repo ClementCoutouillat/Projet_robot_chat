@@ -1,6 +1,15 @@
+/**
+ * @file Ydlidar.c
+ * @author JiangboWANG
+ * @brief
+ * @version 0.1
+ * @date 2024-01-09
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #include "Ydlidar.h"
 #include "ydlidar_protocol.h"
-#include "main.h"
 #include "math.h"
 #include "string.h"
 #include "myuart.h"
@@ -8,9 +17,12 @@
 extern ydlidar_t ydlidar;
 extern UART_HandleTypeDef huart4;
 
+SemaphoreHandle_t semYdlidarUartrRead;
+QueueHandle_t obstacleAngleAndDistanceQueue;
+
 ScanPoint_t obstacleAngleAndDistances[RobotNumber] = {0};
 uint8_t obstacleAngleAndDistancesIndex = 0;
-SemaphoreHandle_t semYdlidarUartrRead;
+
 ydlidar_data_process_status_t dataProcessStatus = WAITING_DATA;
 static bool isFirstRobot = true;
 
@@ -34,9 +46,21 @@ void YdlidarInit(void)
     ydlidar.func.receive_data_dma = uartReceiveDataDMA;
 }
 
+/**
+ * @brief Ydlidar start scan function with dma
+ *        we use two buffer to store the scan data, one for process, one for receive
+ *        for example: when buffer1 is processing, buffer2 is receiving,and receiving speed is faster than processing speed
+ *        so when buffer1 is processed, buffer2 is already received, so after buffer1 is processed, we can process buffer2,
+ *        and then save data to buffer1, and then process buffer1, and so on
+ */
 void YdlidarReceivedScanDataWithDMA(void)
 {
-    // receive scan data use ydlidarUartRawData[SCAN_CIRCLE_INDEX] address and size
+    if (dataProcessStatus == WAITING_DATA)
+    {
+        xSemaphoreGiveFromISR(semYdlidarUartrRead, NULL);
+        SCAN_CIRCLE_INDEX = (SCAN_CIRCLE_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
+    }
+    printf("Ydliar DMA,dataProcessStatus = %d\r\n", dataProcessStatus);
     startReceiveScanData(ydlidarUartRawData[SCAN_CIRCLE_INDEX], sizeof(ydlidarUartRawData[SCAN_CIRCLE_INDEX]));
 }
 
@@ -77,12 +101,82 @@ void restartScan(void)
     printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
     if (startScan() == RESULT_OK)
     {
-        YdlidarReceivedScanDataWithDMA();
-        printf("\r\nNow YDLIDAR is scanning ...... \r\n");
+        printf("[YDLIDAR INFO] Now YDLIDAR is scanning ...... \r\n\r\n");
     }
     else
     {
-        printf("start YDLIDAR is failed!  Continue........ \r\n");
+        printf("[YDLIDAR ERROR] start YDLIDAR is failed!  Continue........ \r\n");
+    }
+}
+
+/**
+ * @brief  This function is used to get the obstacle angle after process,
+ *         the obstacle angle is the angle of the obstacle which is the nearest to the robot,
+ *         the obstacle angle is in the range of [0, 360]
+ *         for chat: this angle is used to hit the souris
+ *         for souris: this angle is used to avoid the obstacle[the chat]
+ */
+bool getAngleAndDistanceAfterProcess(double *angles, double *distances, int LSN)
+{
+    double obstacleStartAngle = 0.0;
+    double obstacleEndAngle = 0.0;
+    double obstacleDistance = 0.0;
+    uint8_t usefullDistanceCount = 0;
+    for (uint8_t i = 0; i < LSN; i++)
+    {
+        if (distances[i] > 1000)
+        {
+            distances[i] = 0;
+            continue;
+        }
+        else
+        {
+            usefullDistanceCount++;
+        }
+    }
+    if (usefullDistanceCount <= 2)
+    {
+        return false;
+    }
+    else
+    {
+        for (uint8_t i = 0; i < LSN; i++)
+        {
+            if (distances[i] == 0)
+            {
+                continue;
+            }
+            else
+            {
+                obstacleStartAngle = angles[i];
+                for (uint8_t j = i + 1; j < LSN; j++)
+                {
+                    if (distances[j] == 0)
+                    {
+                        obstacleDistance = distances[(i + j) / 2];
+                        break;
+                    }
+                    else
+                    {
+                        obstacleEndAngle = angles[j];
+                    }
+                }
+                break;
+            }
+        }
+        if (isFirstRobot == true)
+        {
+            isFirstRobot = false;
+            obstacleAngleAndDistances[FirstRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
+            obstacleAngleAndDistances[FirstRobot].distance = obstacleDistance;
+            return false;
+        }
+        else
+        {
+            obstacleAngleAndDistances[SecondRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
+            obstacleAngleAndDistances[SecondRobot].distance = obstacleDistance;
+            return true;
+        }
     }
 }
 
@@ -92,8 +186,10 @@ void restartScan(void)
  */
 void dataProcess(void)
 {
+    dataProcessStatus = WAITING_DATA;
     ydlidar_data_packet_t *data_packet = NULL;
     xSemaphoreTake(semYdlidarUartrRead, portMAX_DELAY);
+    dataProcessStatus = PROCESSING_DATA;
     printf("receiveFlag = %d\r\n", receiveFlag);
     bool getTwoRobotObstacle = false;
     uint8_t *data = (uint8_t *)&ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX];
@@ -105,7 +201,7 @@ void dataProcess(void)
         {
             printf("| ");
         }
-        if (i % 40 == 0)
+        if (i % 50 == 0)
         {
             printf("\r\n");
         }
@@ -168,6 +264,8 @@ void dataProcess(void)
                 getTwoRobotObstacle = getAngleAndDistanceAfterProcess((double *)angles, (double *)distances, data_packet->size_LSN);
                 if (getTwoRobotObstacle)
                 {
+                    xQueueOverwrite(
+                        obstacleAngleAndDistanceQueue, &obstacleAngleAndDistances);
                     break;
                 }
             }
@@ -188,78 +286,6 @@ void dataProcess(void)
     // stopScan();
 }
 
-/**
- * @brief  This function is used to get the obstacle angle after process,
- *         the obstacle angle is the angle of the obstacle which is the nearest to the robot,
- *         the obstacle angle is in the range of [0, 360]
- *         for chat: this angle is used to hit the souris
- *         for souris: this angle is used to avoid the obstacle[the chat]
- *
- */
-
-bool getAngleAndDistanceAfterProcess(double *angles, double *distances, int LSN)
-{
-    double obstacleStartAngle = 0.0;
-    double obstacleEndAngle = 0.0;
-    double obstacleDistance = 0.0;
-    uint8_t usefullDistanceCount = 0;
-    for (uint8_t i = 0; i < LSN; i++)
-    {
-        if (distances[i] > 1000)
-        {
-            continue;
-        }
-        else
-        {
-            usefullDistanceCount++;
-        }
-    }
-    if (usefullDistanceCount <= 2)
-    {
-        return false;
-    }
-    else
-    {
-        for (uint8_t i = 0; i < LSN; i++)
-        {
-            if (distances[i] == 0)
-            {
-                continue;
-            }
-            else
-            {
-                obstacleStartAngle = angles[i];
-                for (uint8_t j = i + 1; j < LSN; j++)
-                {
-                    if (distances[j] == 0)
-                    {
-                        obstacleDistance = distances[(i + j) / 2];
-                        break;
-                    }
-                    else
-                    {
-                        obstacleEndAngle = angles[j];
-                    }
-                }
-                break;
-            }
-        }
-        if (isFirstRobot == true)
-        {
-            isFirstRobot = false;
-            obstacleAngleAndDistances[FirstRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
-            obstacleAngleAndDistances[FirstRobot].distance = obstacleDistance;
-            return false;
-        }
-        else
-        {
-            obstacleAngleAndDistances[SecondRobot].angle = (obstacleStartAngle + obstacleEndAngle) / 2.0;
-            obstacleAngleAndDistances[SecondRobot].distance = obstacleDistance;
-            return true;
-        }
-    }
-}
-
 // task to run the ydlidar
 void task_ydlidar(void *argument)
 {
@@ -269,7 +295,6 @@ void task_ydlidar(void *argument)
     {
         vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));
         dataProcess();
-        // xTaskNotifyGive(AvoidTask_Handler);
         // printf("task_ydlidar is running\r\n");
     }
 }
@@ -280,12 +305,24 @@ void createYdlidarTask(void)
     semYdlidarUartrRead = xSemaphoreCreateBinary();
     if (semYdlidarUartrRead == NULL)
     {
-        printf("[ERROR]: Semaphore create failed.\r\n"); // TODO: handle error
+        printf("[ERROR]: Semaphore create failed.\r\n");
+        softReset();
     }
     else
     {
-        printf("[INFO]: Ydlidar uart semaphore create success.\r\n");
+        printf("[INFO]: Semaphore create success.\r\n");
     }
+    obstacleAngleAndDistanceQueue = xQueueCreate(2, sizeof(obstacleAngleAndDistances));
+    if (obstacleAngleAndDistanceQueue == NULL)
+    {
+        printf("[ERROR]: Queue create failed.\r\n");
+        softReset();
+    }
+    else
+    {
+        printf("[INFO]: Queue create success.\r\n");
+    }
+    YdlidarReceivedScanDataWithDMA();
     printf("[INFO]: Create YDLIDAR task.\r\n");
     xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 3, NULL);
 }

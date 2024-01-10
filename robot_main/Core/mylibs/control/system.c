@@ -17,8 +17,10 @@
 #include "system.h"
 #include "tim.h"
 #include "motorInterface.h"
+#include "queue.h"
 
-extern ScanPoint_t obstacleAngleAndDistances[RobotNumber];
+ScanPoint_t obstacleAngleAndDistancesRev[RobotNumber];
+extern QueueHandle_t obstacleAngleAndDistanceQueue;
 extern uint8_t PointDataProcessIndex;
 TaskHandle_t AvoidTask_Handler;
 static void timerInit(void);
@@ -89,17 +91,17 @@ static void chat(void)
     while (1)
     {
         /* receive notification */
-        if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
+        if (xQueueReceive(obstacleAngleAndDistanceQueue, &obstacleAngleAndDistancesRev, portMAX_DELAY) == pdPASS)
         {
-            if (obstacleAngleAndDistances[FirstRobot].distance < obstacleAngleAndDistances[SecondRobot].distance)
+            if (obstacleAngleAndDistancesRev[FirstRobot].distance < obstacleAngleAndDistancesRev[SecondRobot].distance)
             {
-                nearestSourisAngle = obstacleAngleAndDistances[FirstRobot].angle;
-                nearestSourisDistance = obstacleAngleAndDistances[FirstRobot].distance;
+                nearestSourisAngle = obstacleAngleAndDistancesRev[FirstRobot].angle;
+                nearestSourisDistance = obstacleAngleAndDistancesRev[FirstRobot].distance;
             }
             else
             {
-                nearestSourisAngle = obstacleAngleAndDistances[SecondRobot].angle;
-                nearestSourisDistance = obstacleAngleAndDistances[SecondRobot].distance;
+                nearestSourisAngle = obstacleAngleAndDistancesRev[SecondRobot].angle;
+                nearestSourisDistance = obstacleAngleAndDistancesRev[SecondRobot].distance;
             }
 
             if (nearestSourisAngle > 0 && nearestSourisAngle < 180)
@@ -132,14 +134,14 @@ static void souris(void)
     uint8_t chatAngleCount = 0;
     while (1)
     {
-        if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
+        if (xQueueReceive(obstacleAngleAndDistanceQueue, &obstacleAngleAndDistancesRev, portMAX_DELAY) == pdPASS)
         {
             if (chatAngleCount < MaxChatKeepAngleCount)
             {
-                chatAngle[FirstRobot][chatAngleCount] = obstacleAngleAndDistances[FirstRobot].angle;
-                chatAngle[SecondRobot][chatAngleCount] = obstacleAngleAndDistances[SecondRobot].angle;
-                chatDistance[FirstRobot][chatAngleCount] = obstacleAngleAndDistances[FirstRobot].distance;
-                chatDistance[SecondRobot][chatAngleCount] = obstacleAngleAndDistances[SecondRobot].distance;
+                chatAngle[FirstRobot][chatAngleCount] = obstacleAngleAndDistancesRev[FirstRobot].angle;
+                chatAngle[SecondRobot][chatAngleCount] = obstacleAngleAndDistancesRev[SecondRobot].angle;
+                chatDistance[FirstRobot][chatAngleCount] = obstacleAngleAndDistancesRev[FirstRobot].distance;
+                chatDistance[SecondRobot][chatAngleCount] = obstacleAngleAndDistancesRev[SecondRobot].distance;
                 chatAngleCount++;
             }
             else
@@ -164,8 +166,8 @@ static void souris(void)
                         ChatRobot = SecondRobot;
                     }
                 }
-                obstacleAngle = obstacleAngleAndDistances[ChatRobot].angle;
-                obstacleDistance = obstacleAngleAndDistances[ChatRobot].distance;
+                obstacleAngle = obstacleAngleAndDistancesRev[ChatRobot].angle;
+                obstacleDistance = obstacleAngleAndDistancesRev[ChatRobot].distance;
                 if (obstacleAngle > 0 && obstacleAngle < 180)
                 {
                     changeAngle(270);
