@@ -5,9 +5,13 @@
 #include "task.h"
 #include "Ydlidar.h"
 #include "stdbool.h"
+#include "config.h"
 #define RATE_1_HZ 1
 #define RATE_10_HZ 10
 #define RATE_100_HZ 100
+
+#define YDLIDAR_
+
 
 extern TaskHandle_t AvoidTask_Handler;
 

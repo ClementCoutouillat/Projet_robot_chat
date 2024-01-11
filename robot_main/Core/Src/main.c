@@ -73,7 +73,7 @@ void start_task(void *pvParameters)
     // Create LED task
     createLedTask();
     // Create shell task
-    createShellTask();
+    // createShellTask();
     // create motor task
 //    createDcMotorTask();
     // Create board task
@@ -83,7 +83,7 @@ void start_task(void *pvParameters)
     // Create ydlidar task
     createYdlidarTask();
     // Create avoid task
-//    createSystemTask();
+    createSystemTask();
     // delete start task
     vTaskDelete(StartTask_Handler); // delete start task
     taskEXIT_CRITICAL();            // exit critical section

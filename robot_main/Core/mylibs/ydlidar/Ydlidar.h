@@ -14,6 +14,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "config.h"
 
 #define MAX_SCAN_POINTS 360
 #define FirstRobot 0

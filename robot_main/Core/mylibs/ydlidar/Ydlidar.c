@@ -25,11 +25,11 @@ uint8_t obstacleAngleAndDistancesIndex = 0;
 
 ydlidar_data_process_status_t dataProcessStatus = WAITING_DATA;
 static bool isFirstRobot = true;
+static bool NotFirstTimeReceiveData = false;
 
 uint8_t ydlidarUartRawData[MAX_SCAN_BUFFER_SIZE][MAX_SCAN_POINTS];
 uint8_t SCAN_CIRCLE_INDEX = 0;
 uint8_t PROCESS_SCAN_DATA_INDEX = 0;
-bool receiveFlag = false;
 
 // #define YDLIDAR_DEBUG
 // #define YDLIDAR_DEBUG_LEVEL_2
@@ -55,13 +55,15 @@ void YdlidarInit(void)
  */
 void YdlidarReceivedScanDataWithDMA(void)
 {
-    if (dataProcessStatus == WAITING_DATA)
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (dataProcessStatus == WAITING_DATA && NotFirstTimeReceiveData == true)
     {
-        xSemaphoreGiveFromISR(semYdlidarUartrRead, NULL);
+        xSemaphoreGiveFromISR(semYdlidarUartrRead, &xHigherPriorityTaskWoken);
         SCAN_CIRCLE_INDEX = (SCAN_CIRCLE_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
     }
-    printf("Ydliar DMA,dataProcessStatus = %d\r\n", dataProcessStatus);
     startReceiveScanData(ydlidarUartRawData[SCAN_CIRCLE_INDEX], sizeof(ydlidarUartRawData[SCAN_CIRCLE_INDEX]));
+    NotFirstTimeReceiveData = true;
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 /**
@@ -101,6 +103,7 @@ void restartScan(void)
     printf("[YDLIDAR INFO] YDLIDAR running correctly! The health status: %s\r\n", healthinfo.status == 0 ? "well" : "bad");
     if (startScan() == RESULT_OK)
     {
+        YdlidarReceivedScanDataWithDMA();
         printf("[YDLIDAR INFO] Now YDLIDAR is scanning ...... \r\n\r\n");
     }
     else
@@ -190,7 +193,6 @@ void dataProcess(void)
     ydlidar_data_packet_t *data_packet = NULL;
     xSemaphoreTake(semYdlidarUartrRead, portMAX_DELAY);
     dataProcessStatus = PROCESSING_DATA;
-    printf("receiveFlag = %d\r\n", receiveFlag);
     bool getTwoRobotObstacle = false;
     uint8_t *data = (uint8_t *)&ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX];
     // #ifdef YDLIDAR_DEBUG_LEVEL_2
@@ -264,6 +266,7 @@ void dataProcess(void)
                 getTwoRobotObstacle = getAngleAndDistanceAfterProcess((double *)angles, (double *)distances, data_packet->size_LSN);
                 if (getTwoRobotObstacle)
                 {
+                    printf("[INFO] send data to queue\r\n");
                     xQueueOverwrite(
                         obstacleAngleAndDistanceQueue, &obstacleAngleAndDistances);
                     break;
@@ -280,7 +283,6 @@ void dataProcess(void)
             dataIndex++;
         }
     }
-    receiveFlag = false;
     memset(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX], 0, sizeof(ydlidarUartRawData[PROCESS_SCAN_DATA_INDEX]));
     PROCESS_SCAN_DATA_INDEX = (PROCESS_SCAN_DATA_INDEX + 1) % MAX_SCAN_BUFFER_SIZE;
     // stopScan();
@@ -295,7 +297,7 @@ void task_ydlidar(void *argument)
     {
         vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));
         dataProcess();
-        // printf("task_ydlidar is running\r\n");
+        printf("task_ydlidar is running\r\n");
     }
 }
 
@@ -312,7 +314,7 @@ void createYdlidarTask(void)
     {
         printf("[INFO]: Semaphore create success.\r\n");
     }
-    obstacleAngleAndDistanceQueue = xQueueCreate(2, sizeof(obstacleAngleAndDistances));
+    obstacleAngleAndDistanceQueue = xQueueCreate(1, sizeof(ScanPoint_t) * RobotNumber);
     if (obstacleAngleAndDistanceQueue == NULL)
     {
         printf("[ERROR]: Queue create failed.\r\n");
@@ -322,7 +324,7 @@ void createYdlidarTask(void)
     {
         printf("[INFO]: Queue create success.\r\n");
     }
-    YdlidarReceivedScanDataWithDMA();
+
     printf("[INFO]: Create YDLIDAR task.\r\n");
-    xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", 1024, NULL, 3, NULL);
+    xTaskCreate((TaskFunction_t)task_ydlidar, "task_ydlidar", Ydliar_TASK_STACK_SIZE, NULL, Ydliar_TASK_PRIORITY, NULL);
 }

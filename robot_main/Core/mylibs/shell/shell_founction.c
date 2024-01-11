@@ -65,7 +65,7 @@ int32_t motorCommand(h_shell_t *h_shell, int argc, char **argv)
     {
         printf("[ERROR]: Command not found\r\n");
     }
-    return 0 ;
+    return 0;
 }
 
 void registerShellCommands(h_shell_t *h_shell)
@@ -87,14 +87,17 @@ void task_shell(void *argument)
     shell_init(&h_shell);
     registerShellCommands(&h_shell);
     printf("[INFO]: Shell init success.\r\n");
+
+    TickType_t lastWakeTime = getSysTickCnt();
     while (1)
     {
         shell_run(&h_shell);
+        vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(5));
     }
 }
 
 void createShellTask(void)
 {
-    xTaskCreate(task_shell, "shell", 512, NULL, 1, NULL);
+    xTaskCreate(task_shell, "shell", Shell_TASK_STACK_SIZE, NULL, Shell_TASK_PRIORITY, NULL);
     printf("[INFO]: Shell task create success.\r\n");
 }

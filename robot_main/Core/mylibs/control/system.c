@@ -22,7 +22,6 @@
 ScanPoint_t obstacleAngleAndDistancesRev[RobotNumber];
 extern QueueHandle_t obstacleAngleAndDistanceQueue;
 extern uint8_t PointDataProcessIndex;
-TaskHandle_t AvoidTask_Handler;
 static void timerInit(void);
 static void chat(void);
 static void souris(void);
@@ -58,8 +57,11 @@ void systemInit(void)
 
 void systemControl(void *argument)
 {
+    TickType_t lastWakeTime = getSysTickCnt();
+
     while (1)
     {
+        printf("chat:%d\r\n", isChat());
         if (isChat())
         {
             chat();
@@ -68,7 +70,7 @@ void systemControl(void *argument)
         {
             souris();
         }
-        vTaskDelay(100);
+        vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(90));
     }
 }
 
@@ -180,6 +182,7 @@ static void souris(void)
                 }
             }
         }
+        
     }
 }
 
@@ -216,5 +219,6 @@ void softReset(void)
 void createSystemTask(void)
 {
     // Task Handle
-    xTaskCreate(systemControl, "systemControl", 512, NULL, 1, &AvoidTask_Handler);
+    printf("[INFO]: Create system task\r\n");
+    xTaskCreate(systemControl, "systemControl", System_TASK_STACK_SIZE, NULL, System_TASK_PRIORITY, NULL);
 }

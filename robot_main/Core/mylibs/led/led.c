@@ -17,25 +17,6 @@ static SemaphoreHandle_t ledStartSemaphore = NULL;
 static uint32_t blinkingPeriod = 1000; // LED blinking period in ms
 static bool ledOn = false;             // LED control variable
 
-void LedTask(void *argument)
-{
-
-    if (xSemaphoreTake(ledStartSemaphore, portMAX_DELAY) == pdTRUE)
-    {
-        while (1)
-        {
-            if (ledOn)
-            {
-                HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-                HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-                HAL_GPIO_TogglePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin);
-                vTaskDelay(blinkingPeriod);
-            }
-        }
-    }
-    vTaskDelete(NULL);
-}
-
 int32_t led(h_shell_t *h_shell, int argc, char **argv)
 {
     if (argc != 2)
@@ -67,6 +48,38 @@ int32_t led(h_shell_t *h_shell, int argc, char **argv)
     return 0;
 }
 
+/**
+ * @brief This function is to control the LED
+ *        The LED will blink with the period of blinkingPeriod
+ *        The LED will be turned on or off by ledOn
+ *        The LED will be turned on or off by ledOn
+ *
+ * @param argument
+ */
+void LedTask(void *argument)
+{
+    TickType_t lastWakeTime = getSysTickCnt();
+    if (xSemaphoreTake(ledStartSemaphore, portMAX_DELAY) == pdTRUE)
+    {
+        while (1)
+        {
+            if (ledOn)
+            {
+                HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+                HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
+                HAL_GPIO_TogglePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin);
+                vTaskDelay(blinkingPeriod);
+            }
+            vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(1));
+        }
+    }
+    vTaskDelete(NULL);
+}
+
+/**
+ * @brief Create a Led Task object
+ *
+ */
 void createLedTask(void)
 {
     ledStartSemaphore = xSemaphoreCreateBinary();
@@ -77,6 +90,6 @@ void createLedTask(void)
     else
     {
         printf("[INFO]: LED Semaphore create success.\r\n");
-        xTaskCreate(LedTask, "LedTask", 128, NULL, 1, NULL);
+        xTaskCreate(LedTask, "LedTask", Led_TASK_STACK_SIZE, NULL, Led_TASK_PRIORITY, NULL);
     }
 }

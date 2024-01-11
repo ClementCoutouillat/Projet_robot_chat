@@ -4,9 +4,7 @@
 #include "stdio.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
-#define BOARD_TASK_STACK_SIZE 128
-#define BOARD_TASK_PRIORITY 3
+#include "config.h"
 
 void boardTask(void *pvParameters);
 void createBoardTask(void);
