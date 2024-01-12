@@ -159,21 +159,6 @@ void checkIfIsSameRobotData(const double oldObstacleStartAngle, const double old
     }
 }
 
-bool checkIfIsSameRobot(const double oldObstacleAgnle, const double obstacleAngle)
-{
-    // printf("[checkIfIsSameRobot] oldObstacleAgnle = %f, obstacleAngle = %f\r\n", oldObstacleAgnle, obstacleAngle);
-    if (fabs(oldObstacleAgnle - obstacleAngle) < 2.0)
-    {
-        // printf("[checkIfIsSameRobot] is same robot\r\n");
-        return true;
-    }
-    else
-    {
-        // printf("[checkIfIsSameRobot] is not same robot\r\n");
-        return false;
-    }
-}
-
 /**
  * @brief  This function is used to get the obstacle angle after process,
  *         the obstacle angle is the angle of the obstacle which is the nearest to the robot,
@@ -362,11 +347,11 @@ void dataProcess(void)
                                                                       (double *)distances, data_packet->size_LSN);
                 if (getTwoRobotObstacle)
                 {
-                    printf("[DEBUg]:send data to queue success\r\n");
-                    for (int i = 0; i < RobotNumber; i++)
-                    {
-                        printf("[INFO] obstacleAngleAndDistances[%d].angle = %f,distance = %f\r\n", i, obstacleAngleAndDistances[i].angle, obstacleAngleAndDistances[i].distance);
-                    }
+                    // printf("[DEBUg]:send data to queue success\r\n");
+                    // for (int i = 0; i < RobotNumber; i++)
+                    // {
+                    //     printf("[INFO] obstacleAngleAndDistances[%d].angle = %f,distance = %f\r\n", i, obstacleAngleAndDistances[i].angle, obstacleAngleAndDistances[i].distance);
+                    // }
                     xQueueOverwrite(obstacleAngleAndDistanceQueue, &obstacleAngleAndDistances);
                     isFirstRobot = true;
 

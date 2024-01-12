@@ -16,6 +16,6 @@
 #define Led_TASK_STACK_SIZE 128
 #define Led_TASK_PRIORITY 1
 
-#define MAX_DISTANCE 800
-
+#define MAX_DISTANCE 600
+#define MIN_DISTANCE 300
 #endif // __CONFIG_H__
