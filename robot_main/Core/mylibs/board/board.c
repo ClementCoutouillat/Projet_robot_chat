@@ -15,7 +15,7 @@ void boardTask(void *pvParameters)
             // printf("[INFO] front boarde  r detected\r\n");
             motorStop();
             moveDistance(0.04, -300);
-            changeAngle(180);
+            changeAngle(180, "left");
 
             BORDER_FRONT_FLAG = false;
         }

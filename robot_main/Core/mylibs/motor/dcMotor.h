@@ -15,7 +15,7 @@
 #include "getEncoder.h"
 #include "PIDControl.h"
 
-#define MAX_SPEED 300
+#define MAX_SPEED 200
 #define SPEED_COMPUTE_PER_S 1000 / 100
 #define SECONDPERMINUTE 60.0f
 // define the PWM Duty Cycle for stop the motor

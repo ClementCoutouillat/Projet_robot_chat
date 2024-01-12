@@ -124,20 +124,21 @@ void EXTI2_3_IRQHandler(void)
     {
         __HAL_GPIO_EXTI_CLEAR_IT(BORDER_BACK_Pin);
         char msg[] = "BORDER_BACK \n\r";
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         HAL_GPIO_TogglePin(GPIOB, LED_ORANGE_Pin);
-        // TODO : fonction_change_direction(direction);
         BORDER_BACK_FLAG = true;
     }
     // If border_back interruption
     if (__HAL_GPIO_EXTI_GET_IT(BORDER_FRONT_Pin) != RESET)
     {
         __HAL_GPIO_EXTI_CLEAR_IT(BORDER_FRONT_Pin);
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 
         char msg[] = "BORDER_FRONT \n\r";
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         HAL_GPIO_TogglePin(GPIOB, LED_ORANGE_Pin);
-        // TODO : fonction_change_direction(direction);
         BORDER_FRONT_FLAG = true;
     }
   /* USER CODE END EXTI2_3_IRQn 0 */
@@ -159,6 +160,8 @@ void EXTI4_15_IRQHandler(void)
         __HAL_GPIO_EXTI_CLEAR_IT(BUMPER1_Pin);
 
         char msg[] = "Contact Bumper 1 \n\r";
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         BUMPER1_FLAG += 1;
 
@@ -171,6 +174,8 @@ void EXTI4_15_IRQHandler(void)
         __HAL_GPIO_EXTI_CLEAR_IT(BUMPER2_Pin);
 
         char msg[] = "Contact Bumper 2 \n\r";
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         BUMPER2_FLAG += 1;
 
@@ -182,6 +187,8 @@ void EXTI4_15_IRQHandler(void)
         __HAL_GPIO_EXTI_CLEAR_IT(BUMPER3_Pin);
 
         char msg[] = "Contact Bumper 3 \n\r";
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         BUMPER3_FLAG += 1;
 
@@ -193,6 +200,8 @@ void EXTI4_15_IRQHandler(void)
         __HAL_GPIO_EXTI_CLEAR_IT(BUMPER4_Pin);
 
         char msg[] = "Contact Bumper 4 \n\r";
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
         HAL_UART_Transmit(&huart2, (uint8_t *)msg, sizeof(msg), HAL_MAX_DELAY);
         BUMPER4_FLAG += 1;
 

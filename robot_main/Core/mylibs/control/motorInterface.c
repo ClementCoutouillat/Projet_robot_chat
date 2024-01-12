@@ -1,8 +1,9 @@
 #include "motorInterface.h"
 #include "math.h"
+#include "string.h"
 #include "getEncoder.h"
-#define Wheel_spacing 0.18f  // The distance between the two wheels of the car
-#define Wheel_diameter 0.04f // The diameter of the wheel of the car
+#define Wheel_spacing 0.155f  // The distance between the two wheels of the car
+#define Wheel_diameter 0.044f // The diameter of the wheel of the car
 
 /**
  * @brief Thi founction is used to control the car to move
@@ -60,35 +61,35 @@ void speedLimit(float *speed)
  *
  * @param angle
  */
-void changeAngle(float angle) // angle in degree
+void changeAngle(uint16_t angle, const char *strPtr)
 {
-    uint16_t m_gauche, m_droite, omega, delay;
-    // version 1
-    //  m_gauche = gMotorData.speed + getdeltaM(angle);
-    //  m_droite = gMotorData2.speed + getdeltaM(angle);
-    //  moteur_controle(m_gauche, m_droite);
-    // version 2
-    if (angle > 0 && angle <= 180)
+    uint16_t m_gauche, m_droite, omega;
+    int16_t delay = 0;
+    char *string = "right";
+    if (strcmp(string, strPtr))
     {
-        m_gauche = MAX_SPEED;
-        m_droite = -MAX_SPEED;
-    }
-    else if (angle > 180 && angle < 360)
-    {
-        m_gauche = -MAX_SPEED;
+        m_gauche = 0; //-MAX_SPEED;
         m_droite = MAX_SPEED;
+        delay += 300;
+        // printf("turn left\r\n");
     }
-    // motor control with pwm directly
+    else // 右转
+    {
+        m_gauche = MAX_SPEED; //-MAX_SPEED;
+        m_droite = 0;         //-MAX_SPEED;
+        delay += 100;
+        // printf("turn right\r\n");
+    }
+    // m_gauche = 0;//-MAX_SPEED;
+    // m_droite = MAX_SPEED;
     moteur_controle_dPWM(m_gauche, m_droite);
-    // angle speed
-    omega = Wheel_diameter * 3.1415926 / 60 / Wheel_spacing * abs(m_gauche - m_droite);
-    // delay
-    delay = (uint16_t)(1000 * round(angle / omega));
+    omega = 0.022 * 2 * 3.14 / 60 / 0.155 * abs(m_gauche - m_droite);
+    // printf("omega:%d angle:%d \r\n", omega, angle);
+    delay += (uint16_t)(angle * 3.14 / 180 / omega * 1000); // * 1000);
+    // printf("delay:%d \r\n", delay);
     HAL_Delay(delay);
-    // stop
     moteur_controle_dPWM(0, 0);
 }
-
 /**
  * @brief stop the car
  *
@@ -96,7 +97,12 @@ void changeAngle(float angle) // angle in degree
  */
 void motorStop(void)
 {
-    motor_contorle_dPWM(0, 0);
+    moteur_controle_dPWM(0, 0);
+}
+
+void goStraight2(float speed) // distance in meter
+{
+    moteur_controle_dPWM(speed, speed);
 }
 
 /**
@@ -107,7 +113,7 @@ void moveDistance(float distance, float speed)
 {
     float runcircle = (distance / (Wheel_diameter * 3.1415926));
     uint16_t delay = (uint16_t)(1000 * (runcircle / speed));
-    goStraight(speed);
-    HAL_Delay(delay);
-    goStraight(0);
+    moteur_controle_dPWM(160, 200);
+    HAL_Delay(1500);
+    motorStop();
 }

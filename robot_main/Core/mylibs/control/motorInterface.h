@@ -15,7 +15,7 @@
 
 void motorStop(void);
 void driverMotor(uint16_t Vx, uint16_t Vz);
-void changeAngle(float angle);
+void changeAngle(uint16_t angle, const char *strPtr);
 void goStraight(float speed);
 void moveDistance(float distance, float speed);
 #endif // __MOTOR_INTERFACE_H__

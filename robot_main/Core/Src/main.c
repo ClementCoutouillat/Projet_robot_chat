@@ -33,6 +33,7 @@
 #include "bumper.h"
 #include "dcMotor.h"
 #include "system.h"
+#include "motorInterface.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,7 +76,7 @@ void start_task(void *pvParameters)
     // Create shell task
     // createShellTask();
     // create motor task
-//    createDcMotorTask();
+    // createDcMotorTask();
     // Create board task
     // createBoardTask();
     // Create bumper task
@@ -133,6 +134,14 @@ int main(void)
     printf("\r\n\r\n>>>>>>>>>>>>>>Projet Robot Start<<<<<<<<<<<<<<\r\n");
     // system init
     systemInit();
+    // HAL_Delay(5000);
+    // while (1)
+    // {
+    //     moteur_controle_dPWM(190, 250);
+    //     HAL_Delay(2000);
+    //     motorStop();
+    //     HAL_Delay(2000);
+    // }
 
     xTaskCreate((TaskFunction_t)start_task, // task function
                 (const char *)"start_task", // task name
