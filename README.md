@@ -47,13 +47,13 @@ Nous utilisons une vitesse fixe pour contrôler la direction du robot. Lorsque l
 ![image](https://github.com/ClementCoutouillat/Projet_robot_chat/blob/main/picture/motor.jpg)
 
 <br />
-leftWheelLinearVelocity = wheelDiameter \* PI \* leftWheelRPM / 60 ;
+leftWheelLinearVelocity = wheelDiameter * PI * leftWheelRPM / 60 ;
 <br />
-rightWheelLinearVelocity = wheelDiameter \* PI \* rightWheelRPM / 60 ;
+rightWheelLinearVelocity = wheelDiameter * PI * rightWheelRPM / 60 ;
 <br />
 angulaVelocity = (leftWheellinearVelocity - rightWheellinearVelocity) / WheelDistance ;
 <br />
-Timer = Angle(0-360) \*PI / 180 / angulaVelocity ;
+Timer = Angle(0-360) *PI / 180 / angulaVelocity ;
 
 ### Distance Control
 
