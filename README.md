@@ -67,4 +67,8 @@ Dans notre code pour manipuler le moteur, nous avons écrit deux fonctions. La p
 
 ## Border
 
+Pour les capteurs de bordure nous avons décidé d'utiliser les interruptions extérieures afin que la plus grande priorité possible et ne pas être interrompu durant le traitement de la détection de bordure. L'objectif était de pouvoir reculer et de tourner de 90 ou 180 degrés. Des tests ont été effectué sur une autre carte afin de vérifier le bon fonctionnement des fonctions. Malheureusement, les fonctions n'ont pas été implémenté sur la carte car les capteurs infrarouges étaient inutilisables et nous n'avions pas d'autres.
+
 ## Contact
+
+Les capteurs de contact sont aussi branché sur les entrées GPIO du microprocesseur. Le contact permettant de gérer le mode chat ou souris, nous avons aussi décidé de les mettre en interruptions extérieur car ça simplifie le code avec juste une interruption qui préempte le code et une gestion de l'interruption. Il faut aussi mettre l'interruption des capteurs de bordure avec une plus haute priorité car c'est plus important de garder le robot sur le terrain que de savoir si on se fait toucher. Dans l'IOC il faut faire attention à comment sont régler les GPIO. Ils sont soit en pull-up ou pull-down.
