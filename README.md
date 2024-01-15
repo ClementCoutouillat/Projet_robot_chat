@@ -43,8 +43,11 @@ Le robot tourne en contrôlant la différence de vitesse entre les roues gauche 
 
 Nous utilisons une vitesse fixe pour contrôler la direction du robot. Lorsque le robot doit tourner à gauche, nous fixons la vitesse de la roue gauche à 0 et celle de la roue droite à la vitesse maximale. Lorsque le robot doit tourner à droite, nous fixons la vitesse de la roue droite à 0 et celle de la roue gauche à la vitesse maximale. Le temps nécessaire pour tourner est calculé avec la formule suivante :
 leftWheelLinearVelocity = wheelDiameter \* PI \* leftWheelRPM / 60 ;
+<br />
 rightWheelLinearVelocity = wheelDiameter \* PI \* rightWheelRPM / 60 ;
+<br />
 angulaVelocity = (leftWheellinearVelocity - rightWheellinearVelocity) / WheelDistance ;
+<br />
 Timer = Angle(0-360) \*PI / 180 / angulaVelocity ;
 
 ### Distance Control
