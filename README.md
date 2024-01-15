@@ -12,8 +12,10 @@ Dans ce projet, nous devons réaliser un robot à propulsion différentielle à 
 Nous utilisons le LIDAR YDLIDAR X4 pour détecter l'autre robot sur le terrain.
 D'après le manuel de données de YDLIDAR, nous savons que YDLIDAR utilise Uart pour la communication. Dans le manuel de développement, nous pouvons obtenir le format des données du LIDAR, comme illustré ci-dessous :
 Lorsque nous envoyons la commande A5 60 au LIDAR, il renvoie une trame de données, dont le format est illustré ci-dessous :
+![image](https://github.com/ClementCoutouillat/Projet_robot_chat/blob/main/picture/scanCommand.png)
 
 Ensuite, en suivant la méthode d'analyse du manuel de développement, nous obtenons les angles et les distances des obstacles de 0 à 360 degrés autour du robot, ce qui nous permet de localiser l'autre robot.
+![image](https://github.com/ClementCoutouillat/Projet_robot_chat/blob/main/picture/receivedata.png)
 
 ## Stratégie
 
@@ -42,6 +44,9 @@ Pour faire avancer le robot en ligne droite, nous contrôlons les vitesses des r
 Le robot tourne en contrôlant la différence de vitesse entre les roues gauche et droite. Lorsque les vitesses des roues sont différentes, le robot tourne.
 
 Nous utilisons une vitesse fixe pour contrôler la direction du robot. Lorsque le robot doit tourner à gauche, nous fixons la vitesse de la roue gauche à 0 et celle de la roue droite à la vitesse maximale. Lorsque le robot doit tourner à droite, nous fixons la vitesse de la roue droite à 0 et celle de la roue gauche à la vitesse maximale. Le temps nécessaire pour tourner est calculé avec la formule suivante :
+![image](https://github.com/ClementCoutouillat/Projet_robot_chat/blob/main/picture/motor.jpg)
+
+<br />
 leftWheelLinearVelocity = wheelDiameter \* PI \* leftWheelRPM / 60 ;
 <br />
 rightWheelLinearVelocity = wheelDiameter \* PI \* rightWheelRPM / 60 ;
@@ -53,6 +58,7 @@ Timer = Angle(0-360) \*PI / 180 / angulaVelocity ;
 ### Distance Control
 
 La distance parcourue par le robot est contrôlée en gérant le temps de fonctionnement du robot. Lorsque le robot fonctionne pendant le temps que nous avons défini, il s'arrête. Cela permet de contrôler la distance parcourue par le robot. Le temps est calculé avec la formule suivante :
+<br />
 Timer = Distance / (WheelDiameter \* PI) / Vitesse ;
 
 ### Commande
