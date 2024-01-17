@@ -71,7 +71,7 @@ Pour les capteurs de bordure nous avons décidé d'utiliser les interruptions ex
 
 ## Contact
 
-Les capteurs de contact sont aussi branché sur les entrées GPIO du microprocesseur. Le contact permettant de gérer le mode chat ou souris, nous avons aussi décidé de les mettre en interruptions extérieur car ça simplifie le code avec juste une interruption qui préempte le code et une gestion de l'interruption. Il faut aussi mettre l'interruption des capteurs de bordure avec une plus haute priorité car c'est plus important de garder le robot sur le terrain que de savoir si on se fait toucher. Dans l'IOC il faut faire attention à comment sont régler les GPIO. Ils sont soit en pull-up ou pull-down.
+Les capteurs de contact sont aussi branché sur les entrées GPIO du microprocesseur. Le contact permettant de gérer le mode chat ou souris, nous avons aussi décidé de les mettre en interruptions extérieur car ça simplifie le code avec juste une interruption qui préempte le code et une gestion de l'interruption. Il faut aussi mettre l'interruption des capteurs de bordure avec une plus haute priorité car c'est plus important de garder le robot sur le terrain que de savoir si on se fait toucher. Dans l'IOC il faut faire attention à comment sont régler les GPIO. Ils sont soit en pull-up ou pull-down. Afin de pour pouvoir résoudre le problème du fonctionnement des  capteurs de contact nous avons décidé de "simuler" le fait d'être touchés par un autre robot. C'est-à-dire quand nous sommes trop proches d'un autre robot nous considérons que nous avons été touché par celui-ci, car sinon le robot ne change jamais d'état.
 
 ## Accéléromètre
 
