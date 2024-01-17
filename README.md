@@ -72,3 +72,7 @@ Pour les capteurs de bordure nous avons décidé d'utiliser les interruptions ex
 ## Contact
 
 Les capteurs de contact sont aussi branché sur les entrées GPIO du microprocesseur. Le contact permettant de gérer le mode chat ou souris, nous avons aussi décidé de les mettre en interruptions extérieur car ça simplifie le code avec juste une interruption qui préempte le code et une gestion de l'interruption. Il faut aussi mettre l'interruption des capteurs de bordure avec une plus haute priorité car c'est plus important de garder le robot sur le terrain que de savoir si on se fait toucher. Dans l'IOC il faut faire attention à comment sont régler les GPIO. Ils sont soit en pull-up ou pull-down.
+
+## Accéléromètre
+
+Au cours du projet nous avons utilisé deux cartes différentes. Sur la première, nous avions pensé à utiliser une centrale inertielle donc un accéléromètre et un gyroscope. Nous avons donc commencé l'écriture d'un driver( un .c et un .h) pour utiliser cet IMU. Malheureusement sur la nouvelle carte il n'y avait plus la possibilité d'utiliser un IMU, et vu l'inutilité de cette partie nous avons décidé de ne pas la mettre sur le github mais de quand même  mentionner le fait qu'un début de driver a été fait.
